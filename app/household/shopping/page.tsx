@@ -1,5 +1,5 @@
 import { ShoppingCart } from "lucide-react";
-import { requireHousehold, getHouseholdMembers } from "@/lib/household";
+import { requireHousehold, getHouseholdMembers, resolveNames } from "@/lib/household";
 import { ShoppingList } from "./shopping-list";
 import {
   Card,
@@ -12,13 +12,22 @@ import {
 export default async function ShoppingPage() {
   const { supabase, user, household } = await requireHousehold();
   const members = await getHouseholdMembers(supabase, household.id);
-  const memberNames = Object.fromEntries(members.map((m) => [m.userId, m.displayName]));
 
   const { data: items } = await supabase
     .from("shopping_items")
     .select("id, name, quantity, is_checked, added_by, checked_by, owner_user_id")
     .eq("household_id", household.id)
     .order("created_at", { ascending: true });
+
+  // Un artículo "personal" puede seguir apuntando a alguien que ya no está
+  // en el piso: resolvemos su nombre real en vez de mostrar "—".
+  const ownerIds = (items ?? [])
+    .map((i) => i.owner_user_id)
+    .filter((id): id is string => !!id);
+  const nameOf = await resolveNames(supabase, members, ownerIds);
+  const memberNames = Object.fromEntries(
+    [...members.map((m) => m.userId), ...ownerIds].map((id) => [id, nameOf(id)])
+  );
 
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">

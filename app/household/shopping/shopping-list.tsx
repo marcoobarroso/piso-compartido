@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Plus, Users, User, X, Pencil, Check } from "lucide-react";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { groceryEmoji } from "@/lib/emoji-match";
 import { Button } from "@/components/ui/button";
@@ -82,13 +83,17 @@ export function ShoppingList({
     if (!trimmed) return;
 
     const supabase = createClient();
-    await supabase.from("shopping_items").insert({
+    const { error } = await supabase.from("shopping_items").insert({
       household_id: householdId,
       name: trimmed,
       quantity: quantity.trim() || null,
       added_by: currentUserId,
       owner_user_id: scope === "personal" ? currentUserId : null,
     });
+    if (error) {
+      toast.error("No se ha podido añadir: " + error.message);
+      return;
+    }
 
     setName("");
     setQuantity("");
@@ -97,7 +102,7 @@ export function ShoppingList({
   async function toggleItem(item: ShoppingItem) {
     const supabase = createClient();
     const checked = !item.is_checked;
-    await supabase
+    const { error } = await supabase
       .from("shopping_items")
       .update({
         is_checked: checked,
@@ -105,11 +110,13 @@ export function ShoppingList({
         checked_at: checked ? new Date().toISOString() : null,
       })
       .eq("id", item.id);
+    if (error) toast.error("No se ha podido actualizar: " + error.message);
   }
 
   async function deleteItem(id: string) {
     const supabase = createClient();
-    await supabase.from("shopping_items").delete().eq("id", id);
+    const { error } = await supabase.from("shopping_items").delete().eq("id", id);
+    if (error) toast.error("No se ha podido quitar: " + error.message);
   }
 
   function startEditing(item: ShoppingItem) {
@@ -127,10 +134,14 @@ export function ShoppingList({
     if (!trimmed) return;
 
     const supabase = createClient();
-    await supabase
+    const { error } = await supabase
       .from("shopping_items")
       .update({ name: trimmed, quantity: editQuantity.trim() || null })
       .eq("id", id);
+    if (error) {
+      toast.error("No se ha podido guardar: " + error.message);
+      return;
+    }
 
     setEditingId(null);
   }

@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { ArrowRight, Undo2 } from "lucide-react";
+import { toast } from "sonner";
 import { deleteSettlement } from "@/app/actions/expenses";
 import { formatCents, formatRelativeTime } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -40,7 +41,10 @@ export function SettlementHistory({ settlements }: { settlements: Settlement[] }
               if (!confirm("¿Deshacer este pago? Se ajustará el saldo.")) return;
               const formData = new FormData();
               formData.set("settlement_id", s.id);
-              startTransition(() => deleteSettlement(formData));
+              startTransition(async () => {
+                const result = await deleteSettlement(formData);
+                if (result?.error) toast.error(result.error);
+              });
             }}
           >
             <Undo2 className="size-3.5" />

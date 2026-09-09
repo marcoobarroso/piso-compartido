@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { UserX } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { removeMember } from "@/app/actions/household";
 import { Button } from "@/components/ui/button";
 
@@ -24,8 +25,12 @@ export function RemoveMemberButton({
     const formData = new FormData();
     formData.set("household_id", householdId);
     formData.set("user_id", userId);
-    await removeMember(undefined, formData);
+    const result = await removeMember(undefined, formData);
     setPending(false);
+    if (result?.error) {
+      toast.error(result.error);
+      return;
+    }
     router.refresh();
   }
 

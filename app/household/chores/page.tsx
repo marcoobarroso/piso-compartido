@@ -1,5 +1,5 @@
 import { ListChecks, SprayCan, History } from "lucide-react";
-import { requireHousehold, getHouseholdMembers } from "@/lib/household";
+import { requireHousehold, getHouseholdMembers, resolveNames } from "@/lib/household";
 import { formatDate, isOverdue, isToday, daysLate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { AddChoreForm } from "./add-chore-form";
@@ -20,8 +20,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 export default async function ChoresPage() {
   const { supabase, user, household } = await requireHousehold();
   const members = await getHouseholdMembers(supabase, household.id);
-  const nameOf = (userId: string) =>
-    members.find((m) => m.userId === userId)?.displayName ?? "—";
   const memberIndex = Object.fromEntries(members.map((m, i) => [m.userId, i]));
   const memberNames = Object.fromEntries(members.map((m) => [m.userId, m.displayName]));
 
@@ -39,6 +37,12 @@ export default async function ChoresPage() {
     .eq("status", "done")
     .order("completed_at", { ascending: false })
     .limit(30);
+
+  const referencedIds = [
+    ...(assignments ?? []).map((a) => a.assigned_to),
+    ...(history ?? []).map((h) => h.completed_by).filter((id): id is string => !!id),
+  ];
+  const nameOf = await resolveNames(supabase, members, referencedIds);
 
   const historyRows = (history ?? []).map((h) => {
     const chore = h.chores as unknown as { name: string } | null;

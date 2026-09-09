@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { deleteChore, updateChore } from "@/app/actions/chores";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,8 +62,12 @@ export function ChoreRowActions({
     setDeleting(true);
     const formData = new FormData();
     formData.set("chore_id", choreId);
-    await deleteChore(undefined, formData);
+    const result = await deleteChore(undefined, formData);
     setDeleting(false);
+    if (result?.error) {
+      toast.error(result.error);
+      return;
+    }
     router.refresh();
   }
 

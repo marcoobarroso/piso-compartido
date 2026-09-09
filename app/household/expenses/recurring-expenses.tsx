@@ -2,6 +2,7 @@
 
 import { useActionState, useRef, useState, useTransition } from "react";
 import { Plus, RefreshCw, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   addRecurringExpense,
   deleteRecurringExpense,
@@ -70,7 +71,10 @@ export function RecurringExpenses({
                     const formData = new FormData();
                     formData.set("recurring_expense_id", r.id);
                     formData.set("active", String(checked));
-                    startTransition(() => toggleRecurringExpense(formData));
+                    startTransition(async () => {
+                      const result = await toggleRecurringExpense(formData);
+                      if (result?.error) toast.error(result.error);
+                    });
                   }}
                   aria-label={r.active ? "Pausar" : "Activar"}
                 />
@@ -80,7 +84,10 @@ export function RecurringExpenses({
                     if (!confirm(`¿Borrar "${r.description}"? No se generará más.`)) return;
                     const formData = new FormData();
                     formData.set("recurring_expense_id", r.id);
-                    startTransition(() => deleteRecurringExpense(formData));
+                    startTransition(async () => {
+                      const result = await deleteRecurringExpense(formData);
+                      if (result?.error) toast.error(result.error);
+                    });
                   }}
                   aria-label="Borrar gasto fijo"
                   className="text-muted-foreground hover:text-destructive"
@@ -95,7 +102,12 @@ export function RecurringExpenses({
             variant="outline"
             size="sm"
             disabled={isPending}
-            onClick={() => startTransition(() => generateRecurringNow())}
+            onClick={() =>
+              startTransition(async () => {
+                const result = await generateRecurringNow();
+                if (result?.error) toast.error(result.error);
+              })
+            }
             className="self-start"
           >
             <RefreshCw className="size-3.5" />
