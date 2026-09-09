@@ -11,13 +11,15 @@ import {
 
 export default async function ShoppingPage() {
   const { supabase, user, household } = await requireHousehold();
-  const members = await getHouseholdMembers(supabase, household.id);
 
-  const { data: items } = await supabase
-    .from("shopping_items")
-    .select("id, name, quantity, is_checked, added_by, checked_by, owner_user_id")
-    .eq("household_id", household.id)
-    .order("created_at", { ascending: true });
+  const [members, { data: items }] = await Promise.all([
+    getHouseholdMembers(supabase, household.id),
+    supabase
+      .from("shopping_items")
+      .select("id, name, quantity, is_checked, added_by, checked_by, owner_user_id")
+      .eq("household_id", household.id)
+      .order("created_at", { ascending: true }),
+  ]);
 
   // Un artículo "personal" puede seguir apuntando a alguien que ya no está
   // en el piso: resolvemos su nombre real en vez de mostrar "—".

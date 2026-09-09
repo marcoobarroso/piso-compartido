@@ -1,7 +1,6 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { requireDisplayName } from "@/lib/profile";
 
 export type Household = {
   id: string;
@@ -16,33 +15,59 @@ export type HouseholdMember = {
 };
 
 /**
- * Loads the current user's household, redirecting to /onboarding if they
- * don't belong to one yet. Every page under a household should start here
- * instead of re-querying membership itself.
+ * Resolves the profile's display name and household in one round trip
+ * (instead of two separate queries) by selecting household_members as a
+ * nested relation of profiles.
  */
-export async function requireHousehold() {
-  const supabase = await createClient();
+export async function resolveCurrentUser(
+  supabase: Awaited<ReturnType<typeof createClient>>
+) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (!user) {
+    redirect("/login");
+  }
 
-  await requireDisplayName(supabase, user!.id);
-
-  const { data: membership } = await supabase
-    .from("household_members")
-    .select("household_id, households(id, name, invite_code)")
-    .eq("user_id", user!.id)
-    .order("joined_at", { ascending: true })
-    .limit(1)
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select(
+      "display_name, household_members(household_id, joined_at, households(id, name, invite_code))"
+    )
+    .eq("id", user.id)
     .maybeSingle();
 
-  if (!membership) {
+  const memberships = (profile?.household_members ?? []) as unknown as {
+    household_id: string;
+    joined_at: string;
+    households: Household;
+  }[];
+  memberships.sort((a, b) => a.joined_at.localeCompare(b.joined_at));
+
+  return {
+    user,
+    displayName: profile?.display_name ?? null,
+    household: memberships[0]?.households ?? null,
+  };
+}
+
+/**
+ * Loads the current user's household, redirecting to /profile/setup or
+ * /onboarding if either step isn't done yet. Every page under a household
+ * should start here instead of re-querying membership itself.
+ */
+export async function requireHousehold() {
+  const supabase = await createClient();
+  const { user, displayName, household } = await resolveCurrentUser(supabase);
+
+  if (!displayName) {
+    redirect("/profile/setup");
+  }
+  if (!household) {
     redirect("/onboarding");
   }
 
-  const household = membership.households as unknown as Household;
-
-  return { supabase, user: user!, household };
+  return { supabase, user, household };
 }
 
 export async function getHouseholdMembers(

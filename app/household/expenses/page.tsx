@@ -22,20 +22,20 @@ import { Button } from "@/components/ui/button";
 
 export default async function ExpensesPage() {
   const { supabase, user, household } = await requireHousehold();
-  const members = await getHouseholdMembers(supabase, household.id);
 
-  const [{ data: expenses }, { data: shares }, { data: settlements }, { data: recurring }] =
+  const [members, { data: expensesWithShares }, { data: settlements }, { data: recurring }] =
     await Promise.all([
+      getHouseholdMembers(supabase, household.id),
+      // expense_shares viene anidado en la misma consulta (está relacionado
+      // por clave foránea) en vez de pedirlo aparte.
       supabase
         .from("expenses")
-        .select("id, description, amount_cents, paid_by, expense_date, category")
+        .select(
+          "id, description, amount_cents, paid_by, expense_date, category, expense_shares(user_id, share_cents)"
+        )
         .eq("household_id", household.id)
         .order("expense_date", { ascending: false })
         .order("created_at", { ascending: false }),
-      supabase
-        .from("expense_shares")
-        .select("expense_id, user_id, share_cents")
-        .eq("household_id", household.id),
       supabase
         .from("settlements")
         .select("id, from_user_id, to_user_id, amount_cents, settled_at")
@@ -47,6 +47,13 @@ export default async function ExpensesPage() {
         .eq("household_id", household.id)
         .order("created_at", { ascending: true }),
     ]);
+
+  const expenses = expensesWithShares;
+  const shares = (expensesWithShares ?? []).flatMap((e) => {
+    const expenseShares =
+      (e.expense_shares as unknown as { user_id: string; share_cents: number }[] | null) ?? [];
+    return expenseShares.map((s) => ({ ...s, expense_id: e.id }));
+  });
 
   const referencedIds = [
     ...(expenses ?? []).map((e) => e.paid_by),

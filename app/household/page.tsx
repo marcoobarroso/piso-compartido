@@ -22,10 +22,16 @@ import { LeaveHouseholdButton } from "./leave-household-button";
 
 export default async function HouseholdPage() {
   const { supabase, user, household } = await requireHousehold();
-  const members = await getHouseholdMembers(supabase, household.id);
 
-  const [{ data: expenses }, { data: shares }, { data: settlements }, { data: nextChore }, { count: pendingShoppingCount }] =
-    await Promise.all([
+  const [
+    members,
+    { data: expenses },
+    { data: shares },
+    { data: settlements },
+    { data: nextChore },
+    { count: pendingShoppingCount },
+  ] = await Promise.all([
+      getHouseholdMembers(supabase, household.id),
       supabase
         .from("expenses")
         .select("paid_by, amount_cents")

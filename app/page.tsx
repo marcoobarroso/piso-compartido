@@ -1,21 +1,14 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { requireDisplayName } from "@/lib/profile";
+import { resolveCurrentUser } from "@/lib/household";
 
 export default async function Home() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { displayName, household } = await resolveCurrentUser(supabase);
 
-  await requireDisplayName(supabase, user!.id);
+  if (!displayName) {
+    redirect("/profile/setup");
+  }
 
-  const { data: membership } = await supabase
-    .from("household_members")
-    .select("household_id")
-    .eq("user_id", user!.id)
-    .limit(1)
-    .maybeSingle();
-
-  redirect(membership ? "/household" : "/onboarding");
+  redirect(household ? "/household" : "/onboarding");
 }

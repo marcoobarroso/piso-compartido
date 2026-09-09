@@ -24,14 +24,14 @@ const MONTH_LABELS = [
 
 export default async function StatsPage() {
   const { supabase, household } = await requireHousehold();
-  const members = await getHouseholdMembers(supabase, household.id);
 
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
-  const [{ data: monthExpenses }, { data: doneThisMonth }, { data: sixMonthExpenses }] =
+  const [members, { data: monthExpenses }, { data: doneThisMonth }, { data: sixMonthExpenses }] =
     await Promise.all([
+      getHouseholdMembers(supabase, household.id),
       supabase
         .from("expenses")
         .select("paid_by, amount_cents, category")

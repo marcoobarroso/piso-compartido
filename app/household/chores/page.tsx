@@ -19,24 +19,26 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default async function ChoresPage() {
   const { supabase, user, household } = await requireHousehold();
-  const members = await getHouseholdMembers(supabase, household.id);
+
+  const [members, { data: assignments }, { data: history }] = await Promise.all([
+    getHouseholdMembers(supabase, household.id),
+    supabase
+      .from("chore_assignments")
+      .select("id, chore_id, assigned_to, due_date, chores(name, recurrence_days, rotation_order)")
+      .eq("household_id", household.id)
+      .eq("status", "pending")
+      .order("due_date", { ascending: true }),
+    supabase
+      .from("chore_assignments")
+      .select("id, due_date, completed_at, completed_by, chores(name)")
+      .eq("household_id", household.id)
+      .eq("status", "done")
+      .order("completed_at", { ascending: false })
+      .limit(30),
+  ]);
+
   const memberIndex = Object.fromEntries(members.map((m, i) => [m.userId, i]));
   const memberNames = Object.fromEntries(members.map((m) => [m.userId, m.displayName]));
-
-  const { data: assignments } = await supabase
-    .from("chore_assignments")
-    .select("id, chore_id, assigned_to, due_date, chores(name, recurrence_days, rotation_order)")
-    .eq("household_id", household.id)
-    .eq("status", "pending")
-    .order("due_date", { ascending: true });
-
-  const { data: history } = await supabase
-    .from("chore_assignments")
-    .select("id, due_date, completed_at, completed_by, chores(name)")
-    .eq("household_id", household.id)
-    .eq("status", "done")
-    .order("completed_at", { ascending: false })
-    .limit(30);
 
   const referencedIds = [
     ...(assignments ?? []).map((a) => a.assigned_to),

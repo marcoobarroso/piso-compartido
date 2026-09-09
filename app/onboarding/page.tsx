@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { requireDisplayName } from "@/lib/profile";
+import { resolveCurrentUser } from "@/lib/household";
 import { OnboardingForms } from "./onboarding-forms";
 
 export default async function OnboardingPage({
@@ -10,20 +10,12 @@ export default async function OnboardingPage({
 }) {
   const { error } = await searchParams;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { displayName, household } = await resolveCurrentUser(supabase);
 
-  await requireDisplayName(supabase, user!.id);
-
-  const { data: membership } = await supabase
-    .from("household_members")
-    .select("household_id")
-    .eq("user_id", user!.id)
-    .limit(1)
-    .maybeSingle();
-
-  if (membership) {
+  if (!displayName) {
+    redirect("/profile/setup");
+  }
+  if (household) {
     redirect("/household");
   }
 
