@@ -16,6 +16,10 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 
+// Longitud del código que envía Supabase (Authentication -> configuración de
+// OTP). Si se cambia ahí, solo hay que tocar este número.
+const OTP_LENGTH = 8;
+
 export function LoginForm() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/";
@@ -80,7 +84,7 @@ export function LoginForm() {
           <CardDescription>
             {step === "email"
               ? "Escribe tu email y te mandamos un código para entrar, sin contraseña."
-              : `Escribe el código de 6 dígitos que le hemos mandado a ${email}.`}
+              : `Escribe el código que le hemos mandado a ${email}.`}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -112,16 +116,18 @@ export function LoginForm() {
                   type="text"
                   inputMode="numeric"
                   autoComplete="one-time-code"
-                  placeholder="123456"
-                  maxLength={6}
-                  className="text-center text-2xl tracking-[0.5em]"
+                  placeholder={"1".repeat(OTP_LENGTH)}
+                  maxLength={OTP_LENGTH}
+                  className="text-center text-xl tracking-[0.35em]"
                   value={code}
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  onChange={(e) =>
+                    setCode(e.target.value.replace(/\D/g, "").slice(0, OTP_LENGTH))
+                  }
                   required
                   autoFocus
                 />
               </div>
-              <Button type="submit" disabled={loading || code.length !== 6}>
+              <Button type="submit" disabled={loading || code.length !== OTP_LENGTH}>
                 <KeyRound className="size-4" />
                 {loading ? "Comprobando..." : "Entrar"}
               </Button>
