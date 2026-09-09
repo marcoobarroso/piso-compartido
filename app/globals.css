@@ -152,6 +152,14 @@
       radial-gradient(circle at 15% -10%, oklch(from var(--primary) l c h / 14%), transparent 55%),
       radial-gradient(circle at 100% 0%, oklch(from var(--primary) l c h / 9%), transparent 50%);
     background-attachment: fixed;
+    /* Deja sitio para el notch/isla dinámica y la barra de inicio cuando
+       se ejecuta como app nativa (Capacitor) o PWA a pantalla completa. */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    /* Sin esto, el WebView nativo de iOS hace un rebote elástico al final
+       del scroll que delata que "es una web", no una app. */
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
   }
   html {
     @apply font-sans;
