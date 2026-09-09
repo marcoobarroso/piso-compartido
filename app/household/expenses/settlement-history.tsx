@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { ArrowRight, Undo2 } from "lucide-react";
 import { deleteSettlement } from "@/app/actions/expenses";
-import { formatCents, formatDate } from "@/lib/format";
+import { formatCents, formatRelativeTime } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 
 type Settlement = {
@@ -29,7 +29,7 @@ export function SettlementHistory({ settlements }: { settlements: Settlement[] }
             {s.fromName} <ArrowRight className="inline size-3 text-muted-foreground" />{" "}
             {s.toName} · {formatCents(s.amount_cents)}
           </span>
-          <span className="text-xs text-muted-foreground">{formatDate(s.settled_at)}</span>
+          <span className="text-xs text-muted-foreground">{formatRelativeTime(s.settled_at)}</span>
           <Button
             type="button"
             variant="ghost"
