@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,11 @@ export function PushPrompt({ userId }: { userId: string }) {
   const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
+    // El WebView de la app nativa no soporta Web Push: ofrecer "Activar"
+    // ahí sería un botón que no hace nada. Los avisos dentro de la app
+    // (campana) sí funcionan.
+    if (Capacitor.isNativePlatform()) return;
+
     const supported =
       "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;
     if (!supported) return;

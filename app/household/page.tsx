@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { LeaveHouseholdButton } from "./leave-household-button";
 import { SignOutButton } from "./sign-out-button";
+import { DeleteAccountButton } from "./delete-account-button";
 
 const DEMO_INVITE_CODE = "DEMO01";
 
@@ -191,6 +192,8 @@ export default async function HouseholdPage({
       )}
 
       <SignOutButton />
+
+      {!isDemo && <DeleteAccountButton />}
 
       <Link
         href="/privacy"

@@ -21,7 +21,7 @@ export default function PrivacyPage() {
       <Section title="Quién es el responsable">
         <p>
           Piso Compartido es una aplicación desarrollada y gestionada por{" "}
-          <strong>[Marc Barro]</strong>. Para cualquier consulta sobre esta política o sobre tus
+          <strong>Marco Barroso Martín</strong>. Para cualquier consulta sobre esta política o sobre tus
           datos, puedes escribir a{" "}
           <a href="mailto:marcbarro.07@gmail.com" className="text-primary hover:underline">
             marcbarro.07@gmail.com
@@ -83,9 +83,11 @@ export default function PrivacyPage() {
 
       <Section title="Cuánto tiempo los guardamos">
         <p>
-          Guardamos tus datos mientras tengas una cuenta activa. Si sales de un piso o borras tu
-          cuenta, dejamos de usar tus datos para ese piso; puedes pedirnos en cualquier momento que
-          eliminemos por completo tu cuenta y todos tus datos personales.
+          Guardamos tus datos mientras tengas una cuenta activa. Puedes borrar tu cuenta tú
+          mismo en cualquier momento desde la pestaña Piso (&quot;Borrar mi cuenta&quot;): se elimina
+          tu correo y tus credenciales, sales del piso y tu nombre pasa a mostrarse como &quot;Usuario
+          eliminado&quot; en el historial de gastos de tus compañeros, que se conserva para que sus
+          cuentas sigan cuadrando.
         </p>
       </Section>
 
