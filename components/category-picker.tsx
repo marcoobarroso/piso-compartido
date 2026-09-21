@@ -26,7 +26,7 @@ export function CategoryPicker({
               type="button"
               onClick={() => setCategory(c)}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-colors",
+                "flex items-center gap-1.5 rounded-full border px-3 py-2 text-sm transition-colors",
                 active
                   ? "border-primary bg-primary/15 text-primary"
                   : "border-input text-muted-foreground hover:bg-muted"

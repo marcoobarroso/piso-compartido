@@ -196,6 +196,13 @@ export async function recordSettlement(
   const toUserId = String(formData.get("to_user_id") ?? "");
   const amountCents = Number(formData.get("amount_cents"));
 
+  if (!Number.isInteger(amountCents) || amountCents <= 0) {
+    return { error: "El importe del pago no es válido." };
+  }
+  if (!fromUserId || !toUserId || fromUserId === toUserId) {
+    return { error: "El pago no es válido." };
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.from("settlements").insert({
@@ -245,7 +252,7 @@ export async function addRecurringExpense(
   if (!amountEuros || amountEuros <= 0) {
     return { error: "El importe no es válido." };
   }
-  if (!dayOfMonth || dayOfMonth < 1 || dayOfMonth > 28) {
+  if (!Number.isInteger(dayOfMonth) || dayOfMonth < 1 || dayOfMonth > 28) {
     return { error: "El día del mes debe estar entre 1 y 28." };
   }
   if (!paidBy) {

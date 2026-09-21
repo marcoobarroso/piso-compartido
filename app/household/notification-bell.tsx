@@ -64,7 +64,15 @@ export function NotificationBell({
         current.map((n) => (n.id === notification.id ? { ...n, is_read: true } : n))
       );
       const supabase = createClient();
-      await supabase.from("notifications").update({ is_read: true }).eq("id", notification.id);
+      const { error } = await supabase
+        .from("notifications")
+        .update({ is_read: true })
+        .eq("id", notification.id);
+      if (error) {
+        setNotifications((current) =>
+          current.map((n) => (n.id === notification.id ? { ...n, is_read: false } : n))
+        );
+      }
     }
     if (notification.link) {
       router.push(notification.link);
@@ -76,13 +84,29 @@ export function NotificationBell({
     if (unreadIds.length === 0) return;
     setNotifications((current) => current.map((n) => ({ ...n, is_read: true })));
     const supabase = createClient();
-    await supabase.from("notifications").update({ is_read: true }).in("id", unreadIds);
+    const { error } = await supabase
+      .from("notifications")
+      .update({ is_read: true })
+      .in("id", unreadIds);
+    if (error) {
+      setNotifications((current) =>
+        current.map((n) => (unreadIds.includes(n.id) ? { ...n, is_read: false } : n))
+      );
+    }
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button type="button" variant="ghost" size="icon" className="relative" />}
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="relative"
+            aria-label="Notificaciones"
+          />
+        }
       >
         <Bell className="size-4" />
         {unreadCount > 0 && (

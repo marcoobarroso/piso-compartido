@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useRef, useState, useTransition } from "react";
 import { Plus } from "lucide-react";
 import { addExpense } from "@/app/actions/expenses";
 import { Button } from "@/components/ui/button";
@@ -17,11 +17,14 @@ export function AddExpenseForm({
   householdId: string;
   members: { userId: string; displayName: string }[];
 }) {
-  const [state, action, pending] = useActionState(addExpense, undefined);
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>();
   const formRef = useRef<HTMLFormElement>(null);
   const [splitMode, setSplitMode] = useState<"equal" | "custom">("equal");
   const [amount, setAmount] = useState("");
   const [customShares, setCustomShares] = useState<Record<string, string>>({});
+  // Cambia al guardar con éxito para vaciar también los campos de reparto.
+  const [formKey, setFormKey] = useState(0);
 
   const totalCents = Math.round((Number(amount) || 0) * 100);
   const enteredCents = Object.values(customShares).reduce(
@@ -31,16 +34,30 @@ export function AddExpenseForm({
   const remainingCents = totalCents - enteredCents;
   const customInvalid = splitMode === "custom" && (totalCents === 0 || remainingCents !== 0);
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    setError(undefined);
+    startTransition(async () => {
+      const result = await addExpense(undefined, formData);
+      if (result?.error) {
+        // Se conserva todo lo escrito para poder corregirlo.
+        setError(result.error);
+        return;
+      }
+      formRef.current?.reset();
+      setSplitMode("equal");
+      setAmount("");
+      setCustomShares({});
+      setFormKey((k) => k + 1);
+    });
+  }
+
   return (
     <form
+      key={formKey}
       ref={formRef}
-      action={async (formData) => {
-        await action(formData);
-        formRef.current?.reset();
-        setSplitMode("equal");
-        setAmount("");
-        setCustomShares({});
-      }}
+      onSubmit={handleSubmit}
       className="flex flex-col gap-3"
     >
       <input type="hidden" name="household_id" value={householdId} />
@@ -55,6 +72,7 @@ export function AddExpenseForm({
           id="amount"
           name="amount"
           type="number"
+          inputMode="decimal"
           step="0.01"
           min="0.01"
           placeholder="24.50"
@@ -109,6 +127,7 @@ export function AddExpenseForm({
                 <Input
                   name={`share_${m.userId}`}
                   type="number"
+                  inputMode="decimal"
                   step="0.01"
                   min="0"
                   placeholder="0.00"
@@ -138,7 +157,7 @@ export function AddExpenseForm({
         </div>
       )}
 
-      {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" disabled={pending || customInvalid}>
         <Plus className="size-4" />
         {pending ? "Guardando..." : "Añadir gasto"}

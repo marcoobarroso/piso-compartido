@@ -26,7 +26,12 @@ export function InviteCode({
   }
 
   async function copyLink() {
-    await navigator.clipboard.writeText(inviteLink());
+    try {
+      await navigator.clipboard.writeText(inviteLink());
+    } catch {
+      toast.error("No se ha podido copiar. Usa el botón de WhatsApp o copia el código a mano.");
+      return;
+    }
     setCopied(true);
     toast.success("Enlace de invitación copiado");
     setTimeout(() => setCopied(false), 2000);

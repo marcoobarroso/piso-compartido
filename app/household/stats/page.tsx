@@ -1,6 +1,6 @@
 import { ChartColumn, Receipt, ListChecks, Tag } from "lucide-react";
 import { requireHousehold, getHouseholdMembers } from "@/lib/household";
-import { formatCents } from "@/lib/format";
+import { formatCents, parseDateOnly } from "@/lib/format";
 import { CATEGORY_LABELS, EXPENSE_CATEGORIES, type ExpenseCategory } from "@/lib/categories";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatTile } from "./stat-tile";
@@ -22,6 +22,14 @@ const MONTH_LABELS = [
   "dic",
 ];
 
+/** YYYY-MM-DD con los componentes locales (toISOString() convertiría a UTC y
+ * podría dar el día anterior). */
+function toDateStr(d: Date): string {
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${month}-${day}`;
+}
+
 export default async function StatsPage() {
   const { supabase, household } = await requireHousehold();
 
@@ -36,7 +44,7 @@ export default async function StatsPage() {
         .from("expenses")
         .select("paid_by, amount_cents, category")
         .eq("household_id", household.id)
-        .gte("expense_date", startOfMonth.toISOString().slice(0, 10)),
+        .gte("expense_date", toDateStr(startOfMonth)),
       supabase
         .from("chore_assignments")
         .select("completed_by")
@@ -47,7 +55,7 @@ export default async function StatsPage() {
         .from("expenses")
         .select("amount_cents, expense_date")
         .eq("household_id", household.id)
-        .gte("expense_date", sixMonthsAgo.toISOString().slice(0, 10)),
+        .gte("expense_date", toDateStr(sixMonthsAgo)),
     ]);
 
   const totalThisMonth = (monthExpenses ?? []).reduce((sum, e) => sum + e.amount_cents, 0);
@@ -82,7 +90,7 @@ export default async function StatsPage() {
     const monthDate = new Date(sixMonthsAgo.getFullYear(), sixMonthsAgo.getMonth() + i, 1);
     const value = (sixMonthExpenses ?? [])
       .filter((e) => {
-        const d = new Date(e.expense_date);
+        const d = parseDateOnly(e.expense_date);
         return d.getFullYear() === monthDate.getFullYear() && d.getMonth() === monthDate.getMonth();
       })
       .reduce((sum, e) => sum + e.amount_cents, 0);

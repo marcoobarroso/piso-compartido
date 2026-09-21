@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef } from "react";
+import { useState, useTransition } from "react";
 import { Plus } from "lucide-react";
 import { addChore } from "@/app/actions/chores";
 import { Button } from "@/components/ui/button";
@@ -15,18 +15,28 @@ export function AddChoreForm({
   householdId: string;
   members: { userId: string; displayName: string }[];
 }) {
-  const [state, action, pending] = useActionState(addChore, undefined);
-  const formRef = useRef<HTMLFormElement>(null);
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | undefined>();
+  // Cambia al guardar con éxito para volver a los valores por defecto.
+  const [formKey, setFormKey] = useState(0);
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    setError(undefined);
+    startTransition(async () => {
+      const result = await addChore(undefined, formData);
+      if (result?.error) {
+        // Se conserva todo lo escrito para poder corregirlo.
+        setError(result.error);
+        return;
+      }
+      setFormKey((k) => k + 1);
+    });
+  }
 
   return (
-    <form
-      ref={formRef}
-      action={async (formData) => {
-        await action(formData);
-        formRef.current?.reset();
-      }}
-      className="flex flex-col gap-3"
-    >
+    <form key={formKey} onSubmit={handleSubmit} className="flex flex-col gap-3">
       <input type="hidden" name="household_id" value={householdId} />
       <div className="flex flex-col gap-2">
         <Label htmlFor="name">Tarea</Label>
@@ -38,7 +48,9 @@ export function AddChoreForm({
           id="recurrence_days"
           name="recurrence_days"
           type="number"
+          inputMode="numeric"
           min="1"
+          step="1"
           defaultValue="7"
           required
         />
@@ -54,7 +66,7 @@ export function AddChoreForm({
           ))}
         </div>
       </div>
-      {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" disabled={pending}>
         <Plus className="size-4" />
         {pending ? "Creando..." : "Añadir tarea"}

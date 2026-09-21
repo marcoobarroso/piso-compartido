@@ -16,11 +16,17 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { signOut } from "@/app/actions/auth";
 import { LeaveHouseholdButton } from "./leave-household-button";
+import { SignOutButton } from "./sign-out-button";
 
-export default async function HouseholdPage() {
+const DEMO_INVITE_CODE = "DEMO01";
+
+export default async function HouseholdPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ joinError?: string }>;
+}) {
+  const { joinError } = await searchParams;
   const { supabase, user, household } = await requireHousehold();
 
   const [
@@ -72,10 +78,21 @@ export default async function HouseholdPage() {
   const myBalance = balances.get(user.id) ?? 0;
 
   const chore = nextChore?.chores as unknown as { name: string } | null;
-  const isAdmin = members.find((m) => m.userId === user.id)?.role === "admin";
+  // En el piso de demostración pública no se dejan las acciones destructivas
+  // (echar gente, salir, regenerar código, renombrar) para no romperle la
+  // demo al siguiente visitante.
+  const isDemo = household.invite_code === DEMO_INVITE_CODE;
+  const isAdmin =
+    members.find((m) => m.userId === user.id)?.role === "admin" && !isDemo;
 
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
+      {joinError === "other" && (
+        <p className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+          No te has podido unir a ese piso porque ya perteneces a otro. Sal de tu piso actual
+          primero si quieres cambiar.
+        </p>
+      )}
       <div className="flex flex-col gap-2">
         <StatCard
           href="/household/expenses"
@@ -164,13 +181,16 @@ export default async function HouseholdPage() {
         </CardContent>
       </Card>
 
-      <LeaveHouseholdButton householdId={household.id} />
+      {isDemo ? (
+        <p className="text-center text-xs text-muted-foreground">
+          Estás viendo un piso de demostración: puedes probar gastos, tareas y compra, pero no
+          salir ni echar a nadie.
+        </p>
+      ) : (
+        <LeaveHouseholdButton householdId={household.id} isLastMember={members.length === 1} />
+      )}
 
-      <form action={signOut}>
-        <Button type="submit" variant="ghost" className="w-full">
-          Cerrar sesión
-        </Button>
-      </form>
+      <SignOutButton />
 
       <Link
         href="/privacy"

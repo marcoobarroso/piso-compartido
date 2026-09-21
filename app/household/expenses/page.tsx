@@ -241,7 +241,7 @@ export default async function ExpensesPage() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-medium">{e.description}</p>
-                  <p className="truncate text-xs text-muted-foreground">
+                  <p className="text-xs break-words text-muted-foreground">
                     Pagó {nameOf(e.paid_by)} · {participantsLabel} · {formatDate(e.expense_date)}
                   </p>
                 </div>

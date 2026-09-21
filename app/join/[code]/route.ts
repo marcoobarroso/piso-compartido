@@ -15,11 +15,16 @@ export async function GET(
   const url = request.nextUrl.clone();
   url.search = "";
 
-  if (error) {
+  if (!error) {
+    url.pathname = "/household";
+  } else if (/ya perteneces/i.test(error.message)) {
+    // Ya está en otro piso: /onboarding lo devolvería a /household sin decir
+    // nada, así que se le explica por qué no se ha podido unir.
+    url.pathname = "/household";
+    url.searchParams.set("joinError", "other");
+  } else {
     url.pathname = "/onboarding";
     url.searchParams.set("error", "invite");
-  } else {
-    url.pathname = "/household";
   }
 
   return NextResponse.redirect(url);

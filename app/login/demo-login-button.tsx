@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { safeNextPath } from "@/lib/safe-redirect";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -12,7 +13,7 @@ const DEMO_PASSWORD = "DemoPiso2026!";
 
 export function DemoLoginButton() {
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/";
+  const next = safeNextPath(searchParams.get("next"));
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {

@@ -298,6 +298,7 @@ function ShoppingGroup({
           <div key={item.id} className="flex items-center gap-2 text-sm">
             <Checkbox
               checked={item.is_checked}
+              aria-label={item.name}
               disabled={!editable}
               onCheckedChange={() => editable && onToggle?.(item)}
             />

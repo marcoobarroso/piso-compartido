@@ -20,6 +20,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://piso-compartido.vercel.app"),
   title: "Piso Compartido",
+  icons: { icon: "/icon-192.png", apple: "/icon-192.png" },
   description: "Gastos, tareas y compra compartidos entre compañeros de piso",
   openGraph: {
     title: "Piso Compartido",

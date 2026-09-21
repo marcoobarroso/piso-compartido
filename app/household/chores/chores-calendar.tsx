@@ -105,9 +105,9 @@ export function ChoresCalendar({
           type="button"
           onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
           aria-label="Mes anterior"
-          className="rounded-md p-1 text-muted-foreground hover:bg-muted"
+          className="flex size-10 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
         >
-          <ChevronLeft className="size-4" />
+          <ChevronLeft className="size-5" />
         </button>
         <p className="text-sm font-medium capitalize">
           {MONTH_LABELS[month.getMonth()]} {month.getFullYear()}
@@ -116,13 +116,13 @@ export function ChoresCalendar({
           type="button"
           onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
           aria-label="Mes siguiente"
-          className="rounded-md p-1 text-muted-foreground hover:bg-muted"
+          className="flex size-10 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
         >
-          <ChevronRight className="size-4" />
+          <ChevronRight className="size-5" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-muted-foreground">
+      <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted-foreground">
         {WEEKDAY_LABELS.map((w) => (
           <span key={w}>{w}</span>
         ))}

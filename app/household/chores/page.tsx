@@ -1,6 +1,6 @@
 import { ListChecks, SprayCan, History } from "lucide-react";
 import { requireHousehold, getHouseholdMembers, resolveNames } from "@/lib/household";
-import { formatDate, isOverdue, isToday, daysLate } from "@/lib/format";
+import { formatDate, isOverdue, isToday, daysLate, parseDateOnly } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { AddChoreForm } from "./add-chore-form";
 import { CompleteChoreButton } from "./complete-chore-button";
@@ -71,7 +71,7 @@ export default async function ChoresPage() {
       recurrenceDays: chore?.recurrence_days ?? 7,
       rotationOrder: chore?.rotation_order ?? [],
       currentAssignedTo: a.assigned_to,
-      currentDueDate: new Date(a.due_date),
+      currentDueDate: parseDateOnly(a.due_date),
     };
   });
 
@@ -152,7 +152,8 @@ export default async function ChoresPage() {
                             members={members}
                           />
                         </div>
-                        {a.assigned_to === user.id && (
+                        {(a.assigned_to === user.id ||
+                          !members.some((m) => m.userId === a.assigned_to)) && (
                           <CompleteChoreButton
                             householdId={household.id}
                             choreId={a.chore_id}

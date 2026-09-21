@@ -15,12 +15,21 @@ export function RenameHouseholdForm({
   const [state, action, pending] = useActionState(renameHousehold, undefined);
 
   return (
-    <form action={action} className="flex gap-2">
+    <form action={action} className="flex flex-col gap-2">
       <input type="hidden" name="household_id" value={householdId} />
-      <Input key={name} name="name" defaultValue={name} required className="flex-1" />
-      <Button type="submit" variant="outline" disabled={pending}>
-        {pending ? "..." : "Renombrar"}
-      </Button>
+      <div className="flex gap-2">
+        <Input
+          key={name}
+          name="name"
+          defaultValue={name}
+          required
+          aria-label="Nombre del piso"
+          className="flex-1"
+        />
+        <Button type="submit" variant="outline" disabled={pending}>
+          {pending ? "..." : "Renombrar"}
+        </Button>
+      </div>
       {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
     </form>
   );

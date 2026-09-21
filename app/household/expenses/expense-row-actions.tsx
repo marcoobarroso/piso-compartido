@@ -69,7 +69,9 @@ export function ExpenseRowActions({
   return (
     <div className="flex shrink-0 gap-1">
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger render={<Button type="button" variant="ghost" size="icon-sm" />}>
+        <DialogTrigger
+          render={<Button type="button" variant="ghost" size="icon-sm" aria-label="Editar gasto" />}
+        >
           <Pencil className="size-3.5" />
         </DialogTrigger>
         <DialogContent>

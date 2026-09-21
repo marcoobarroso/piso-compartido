@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Plus, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -39,11 +39,29 @@ export function RecurringExpenses({
   members: Member[];
   recurring: Recurring[];
 }) {
-  const [state, action, pending] = useActionState(addRecurringExpense, undefined);
+  const [addError, setAddError] = useState<string | undefined>();
   const [payerId, setPayerId] = useState(members[0]?.userId ?? "");
   const [isPending, startTransition] = useTransition();
-  const formRef = useRef<HTMLFormElement>(null);
-  const nameOf = (id: string) => members.find((m) => m.userId === id)?.displayName ?? "—";
+  const [pending, startAddTransition] = useTransition();
+  // Cambia al guardar con éxito para vaciar el formulario.
+  const [formKey, setFormKey] = useState(0);
+  const nameOf = (id: string) =>
+    members.find((m) => m.userId === id)?.displayName ?? "un excompañero";
+
+  function handleAdd(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    setAddError(undefined);
+    startAddTransition(async () => {
+      const result = await addRecurringExpense(undefined, formData);
+      if (result?.error) {
+        // Se conserva todo lo escrito para poder corregirlo.
+        setAddError(result.error);
+        return;
+      }
+      setFormKey((k) => k + 1);
+    });
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -117,11 +135,8 @@ export function RecurringExpenses({
       )}
 
       <form
-        ref={formRef}
-        action={async (formData) => {
-          await action(formData);
-          formRef.current?.reset();
-        }}
+        key={formKey}
+        onSubmit={handleAdd}
         className="flex flex-col gap-3 border-t pt-3"
       >
         <input type="hidden" name="household_id" value={householdId} />
@@ -164,7 +179,7 @@ export function RecurringExpenses({
                 type="button"
                 onClick={() => setPayerId(m.userId)}
                 className={cn(
-                  "rounded-full border px-2.5 py-1 text-xs transition-colors",
+                  "rounded-full border px-3 py-2 text-sm transition-colors",
                   payerId === m.userId
                     ? "border-primary bg-primary/15 text-primary"
                     : "border-input text-muted-foreground hover:bg-muted"
@@ -175,7 +190,7 @@ export function RecurringExpenses({
             ))}
           </div>
         </div>
-        {state?.error && <p className="text-sm text-destructive">{state.error}</p>}
+        {addError && <p className="text-sm text-destructive">{addError}</p>}
         <Button type="submit" variant="outline" disabled={pending}>
           <Plus className="size-4" />
           {pending ? "Guardando..." : "Añadir gasto fijo"}

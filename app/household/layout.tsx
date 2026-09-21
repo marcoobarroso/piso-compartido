@@ -30,7 +30,9 @@ export default async function HouseholdLayout({
       <main className="flex flex-1 flex-col pb-[calc(4rem+env(safe-area-inset-bottom))]">
         {children}
       </main>
-      <PushPrompt userId={user.id} />
+      {/* No se ofrecen avisos push en la demo pública: los recibirían después
+          los móviles de todos los visitantes que los activaran. */}
+      {household.invite_code !== "DEMO01" && <PushPrompt userId={user.id} />}
       <BottomNav />
     </div>
   );

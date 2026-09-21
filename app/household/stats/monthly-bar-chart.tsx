@@ -32,7 +32,7 @@ export function MonthlyBarChart({
             className="w-full max-w-6 rounded-t-[4px] bg-chart-1 transition-[filter] group-hover:brightness-110"
             style={{ height: `${Math.max((col.value / max) * 96, col.value > 0 ? 4 : 0)}px` }}
           />
-          <span className="pb-1 text-[10px] text-muted-foreground">{col.label}</span>
+          <span className="pb-1 text-xs text-muted-foreground">{col.label}</span>
         </div>
       ))}
     </div>

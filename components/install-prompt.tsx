@@ -31,7 +31,7 @@ export function InstallPrompt() {
   if (Capacitor.isNativePlatform() || !deferredPrompt || dismissed) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-between gap-3 border-t bg-background p-3 shadow-lg">
+    <div className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-between gap-3 border-t bg-background p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-lg">
       <span className="text-sm">Instala esta app para acceso rápido desde el móvil</span>
       <div className="flex shrink-0 gap-2">
         <Button size="sm" variant="ghost" onClick={() => setDismissed(true)}>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Home, Mail, KeyRound } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { safeNextPath } from "@/lib/safe-redirect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +23,7 @@ const OTP_LENGTH = 8;
 
 export function LoginForm() {
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/";
+  const next = safeNextPath(searchParams.get("next"));
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -30,6 +31,8 @@ export function LoginForm() {
 
   async function sendCode(e: React.SyntheticEvent) {
     e.preventDefault();
+    const cleanEmail = email.trim().toLowerCase();
+    setEmail(cleanEmail);
     setLoading(true);
 
     const supabase = createClient();
@@ -37,7 +40,7 @@ export function LoginForm() {
     callbackUrl.searchParams.set("next", next);
 
     const { error } = await supabase.auth.signInWithOtp({
-      email,
+      email: cleanEmail,
       options: {
         emailRedirectTo: callbackUrl.toString(),
       },
@@ -46,10 +49,16 @@ export function LoginForm() {
     setLoading(false);
 
     if (error) {
-      toast.error("No se ha podido enviar el código: " + error.message);
+      const tooSoon = /seconds|rate limit/i.test(error.message);
+      toast.error(
+        tooSoon
+          ? "Espera un minuto antes de pedir otro código."
+          : "No se ha podido enviar el código: " + error.message
+      );
       return;
     }
 
+    if (step === "code") toast.success("Código reenviado. Revisa tu correo.");
     setStep("code");
   }
 

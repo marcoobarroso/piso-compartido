@@ -7,7 +7,7 @@ export function formatCents(amountCents: number): string {
 
 /** Parses a "YYYY-MM-DD" date column as a local date, avoiding the UTC
  * midnight shift that `new Date("YYYY-MM-DD")` introduces. */
-function parseDateOnly(dateStr: string): Date {
+export function parseDateOnly(dateStr: string): Date {
   const [year, month, day] = dateStr.split("-").map(Number);
   return new Date(year, month - 1, day);
 }

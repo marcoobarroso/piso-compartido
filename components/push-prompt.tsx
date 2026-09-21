@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 
@@ -14,6 +15,30 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
     outputArray[i] = rawData.charCodeAt(i);
   }
   return outputArray;
+}
+
+async function saveSubscription(userId: string) {
+  const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  if (!vapidPublicKey) throw new Error("Falta la clave VAPID");
+
+  const registration = await navigator.serviceWorker.ready;
+  const subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
+  });
+
+  const json = subscription.toJSON();
+  const supabase = createClient();
+  const { error } = await supabase.from("push_subscriptions").upsert(
+    {
+      user_id: userId,
+      endpoint: json.endpoint!,
+      p256dh: json.keys!.p256dh,
+      auth: json.keys!.auth,
+    },
+    { onConflict: "endpoint" }
+  );
+  if (error) throw error;
 }
 
 export function PushPrompt({ userId }: { userId: string }) {
@@ -29,7 +54,7 @@ export function PushPrompt({ userId }: { userId: string }) {
     // momento fallara el guardado en Supabase): reintenta en silencio en vez
     // de esperar a que el usuario pulse "Activar" otra vez.
     if (Notification.permission === "granted") {
-      saveSubscription();
+      saveSubscription(userId).catch(() => {});
       return;
     }
 
@@ -37,41 +62,22 @@ export function PushPrompt({ userId }: { userId: string }) {
     if (!dismissed && Notification.permission === "default") {
       setVisible(true);
     }
-  }, []);
-
-  async function saveSubscription() {
-    const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-    if (!vapidPublicKey) return;
-
-    const registration = await navigator.serviceWorker.ready;
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) as BufferSource,
-    });
-
-    const json = subscription.toJSON();
-    const supabase = createClient();
-    await supabase.from("push_subscriptions").upsert(
-      {
-        user_id: userId,
-        endpoint: json.endpoint!,
-        p256dh: json.keys!.p256dh,
-        auth: json.keys!.auth,
-      },
-      { onConflict: "endpoint" }
-    );
-  }
+  }, [userId]);
 
   async function subscribe() {
     setSubscribing(true);
-
-    const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      await saveSubscription();
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        await saveSubscription(userId);
+        toast.success("Avisos activados");
+      }
+      setVisible(false);
+    } catch {
+      toast.error("No se han podido activar los avisos. Inténtalo de nuevo más tarde.");
+    } finally {
+      setSubscribing(false);
     }
-
-    setSubscribing(false);
-    setVisible(false);
   }
 
   function dismiss() {
@@ -82,7 +88,7 @@ export function PushPrompt({ userId }: { userId: string }) {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-16 z-40 flex items-center justify-between gap-3 border-t bg-background p-3 shadow-lg">
+    <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 flex items-center justify-between gap-3 border-t bg-background p-3 shadow-lg">
       <div className="flex items-center gap-2">
         <Bell className="size-4 shrink-0 text-primary" />
         <span className="text-sm">Activa avisos para enterarte al momento</span>

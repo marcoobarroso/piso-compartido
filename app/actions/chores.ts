@@ -19,8 +19,8 @@ export async function addChore(
   if (!name) {
     return { error: "Ponle un nombre a la tarea." };
   }
-  if (!recurrenceDays || recurrenceDays <= 0) {
-    return { error: "Indica cada cuántos días se repite." };
+  if (!Number.isInteger(recurrenceDays) || recurrenceDays <= 0) {
+    return { error: "Indica cada cuántos días se repite (un número entero)." };
   }
 
   const supabase = await createClient();
@@ -89,8 +89,8 @@ export async function updateChore(
   if (!name) {
     return { error: "Ponle un nombre a la tarea." };
   }
-  if (!recurrenceDays || recurrenceDays <= 0) {
-    return { error: "Indica cada cuántos días se repite." };
+  if (!Number.isInteger(recurrenceDays) || recurrenceDays <= 0) {
+    return { error: "Indica cada cuántos días se repite (un número entero)." };
   }
   if (rotationOrder.length === 0) {
     return { error: "Elige quién forma parte de la rotación." };
