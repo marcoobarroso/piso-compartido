@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Bell } from "lucide-react";
-import { Capacitor } from "@capacitor/core";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import {
+  enableNativePush,
+  handleNativePushTaps,
+  isNativeApp,
+  nativePushPermission,
+} from "@/lib/native-push";
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -45,12 +51,32 @@ async function saveSubscription(userId: string) {
 export function PushPrompt({ userId }: { userId: string }) {
   const [visible, setVisible] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
+  const router = useRouter();
+
+  // App nativa de iOS: avisos por APNs en vez de Web Push.
+  useEffect(() => {
+    if (!isNativeApp()) return;
+
+    const stopTaps = handleNativePushTaps((path) => router.push(path));
+    nativePushPermission()
+      .then((permission) => {
+        if (permission === "granted") {
+          // Ya dio permiso: se vuelve a guardar el token por si ha cambiado
+          // o por si en este iPhone ha entrado otra cuenta.
+          enableNativePush().catch(() => {});
+        } else if (
+          permission !== "denied" &&
+          !localStorage.getItem("push-prompt-dismissed")
+        ) {
+          setVisible(true);
+        }
+      })
+      .catch(() => {});
+    return stopTaps;
+  }, [userId, router]);
 
   useEffect(() => {
-    // El WebView de la app nativa no soporta Web Push: ofrecer "Activar"
-    // ahí sería un botón que no hace nada. Los avisos dentro de la app
-    // (campana) sí funcionan.
-    if (Capacitor.isNativePlatform()) return;
+    if (isNativeApp()) return;
 
     const supported =
       "Notification" in window && "serviceWorker" in navigator && "PushManager" in window;
@@ -73,10 +99,14 @@ export function PushPrompt({ userId }: { userId: string }) {
   async function subscribe() {
     setSubscribing(true);
     try {
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
-        await saveSubscription(userId);
-        toast.success("Avisos activados");
+      if (isNativeApp()) {
+        if (await enableNativePush()) toast.success("Avisos activados");
+      } else {
+        const permission = await Notification.requestPermission();
+        if (permission === "granted") {
+          await saveSubscription(userId);
+          toast.success("Avisos activados");
+        }
       }
       setVisible(false);
     } catch {

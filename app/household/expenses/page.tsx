@@ -1,4 +1,4 @@
-import { Receipt, Repeat, History, Download } from "lucide-react";
+import { Receipt, Repeat, History } from "lucide-react";
 import { requireHousehold, getHouseholdMembers, resolveNames } from "@/lib/household";
 import { computeBalances, simplifyDebts } from "@/lib/debt-simplify";
 import { formatCents, formatDate } from "@/lib/format";
@@ -9,6 +9,7 @@ import { SettleButton } from "./settle-button";
 import { ExpenseRowActions } from "./expense-row-actions";
 import { RecurringExpenses } from "./recurring-expenses";
 import { SettlementHistory } from "./settlement-history";
+import { ExportButton } from "./export-button";
 import {
   Card,
   CardAction,
@@ -18,7 +19,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 
 export default async function ExpensesPage() {
   const { supabase, user, household } = await requireHousehold();
@@ -208,15 +208,7 @@ export default async function ExpensesPage() {
         <CardHeader>
           <CardTitle className="text-base">Gastos recientes</CardTitle>
           <CardAction>
-            <Button
-              variant="outline"
-              size="sm"
-              nativeButton={false}
-              render={<a href="/household/expenses/export" download />}
-            >
-              <Download className="size-3.5" />
-              Excel
-            </Button>
+            <ExportButton />
           </CardAction>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">

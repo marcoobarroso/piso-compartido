@@ -143,7 +143,13 @@ export async function GET() {
   }
 
   const buffer = await workbook.xlsx.writeBuffer();
-  const filename = `gastos-${household.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.xlsx`;
+  const slug = household.name
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  const filename = `gastos-${slug || "piso"}.xlsx`;
 
   return new Response(buffer, {
     headers: {

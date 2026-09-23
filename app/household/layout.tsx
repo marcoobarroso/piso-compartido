@@ -1,6 +1,7 @@
 import { requireHousehold } from "@/lib/household";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { PushPrompt } from "@/components/push-prompt";
+import { RefreshOnResume } from "@/components/refresh-on-resume";
 import { BottomNav } from "./bottom-nav";
 import { NotificationBell } from "./notification-bell";
 
@@ -33,6 +34,7 @@ export default async function HouseholdLayout({
       {/* No se ofrecen avisos push en la demo pública: los recibirían después
           los móviles de todos los visitantes que los activaran. */}
       {household.invite_code !== "DEMO01" && <PushPrompt userId={user.id} />}
+      <RefreshOnResume />
       <BottomNav />
     </div>
   );

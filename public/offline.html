@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sin conexión · Piso Compartido</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+        background: #0a0a0a;
+        color: #fafafa;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        text-align: center;
+      }
+      main {
+        max-width: 320px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .icon {
+        font-size: 48px;
+        line-height: 1;
+      }
+      h1 {
+        margin: 8px 0 0;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      p {
+        margin: 0;
+        color: #a3a3a3;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      button {
+        margin-top: 12px;
+        min-height: 44px;
+        padding: 0 24px;
+        border: 0;
+        border-radius: 12px;
+        background: #e0703f;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+      }
+      button:disabled {
+        opacity: 0.6;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="icon" aria-hidden="true">📡</div>
+      <h1>Sin conexión</h1>
+      <p>Piso Compartido necesita internet para mostrar los datos de tu piso. Revisa el wifi o los datos móviles.</p>
+      <button id="retry" type="button">Reintentar</button>
+    </main>
+    <script>
+      // Pantalla local que muestra la app nativa (server.errorPath en
+      // capacitor.config.ts) cuando no puede cargar la web.
+      var APP_URL = "https://piso-compartido.vercel.app/household";
+      var button = document.getElementById("retry");
+
+      function retry() {
+        button.disabled = true;
+        button.textContent = "Conectando...";
+        try {
+          sessionStorage.setItem("offline-retry", String(Date.now()));
+        } catch (e) {}
+        window.location.href = APP_URL;
+      }
+
+      button.addEventListener("click", retry);
+      window.addEventListener("online", retry);
+
+      // Si en realidad hay conexión (un fallo puntual de carga), se reintenta
+      // solo, pero como mucho una vez cada 10 segundos para no entrar en bucle.
+      var last = 0;
+      try {
+        last = Number(sessionStorage.getItem("offline-retry") || 0);
+      } catch (e) {}
+      if (navigator.onLine && Date.now() - last > 10000) {
+        setTimeout(retry, 800);
+      }
+    </script>
+  </body>
+</html>

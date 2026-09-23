@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { BackLink } from "./back-link";
 
 export const metadata = {
   title: "Política de privacidad · Piso Compartido",
@@ -8,14 +8,12 @@ export default function PrivacyPage() {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-4 py-8">
       <div>
-        <Link href="/login" className="text-sm text-primary hover:underline">
-          ← Volver
-        </Link>
+        <BackLink />
       </div>
 
       <div className="flex flex-col gap-1">
         <h1 className="font-heading text-2xl font-semibold">Política de privacidad</h1>
-        <p className="text-sm text-muted-foreground">Última actualización: agosto de 2026</p>
+        <p className="text-sm text-muted-foreground">Última actualización: septiembre de 2026</p>
       </div>
 
       <Section title="Quién es el responsable">
@@ -54,7 +52,7 @@ export default function PrivacyPage() {
         <p>
           Solo usamos tus datos para que la aplicación funcione: gestionar tu piso compartido,
           calcular y mostrar saldos entre compañeros, asignar tareas, mantener la lista de la
-          compra al día, enviarte el enlace de acceso y, si lo activas, avisos push. No usamos tus
+          compra al día, enviarte el código de acceso y, si lo activas, avisos push. No usamos tus
           datos con fines publicitarios ni los vendemos a terceros.
         </p>
       </Section>
@@ -73,7 +71,7 @@ export default function PrivacyPage() {
             (Vercel Analytics, que no usa cookies de rastreo).
           </li>
           <li>
-            <strong>Brevo</strong> — envío del correo con el enlace de acceso.
+            <strong>Brevo</strong> — envío del correo con el código de acceso.
           </li>
           <li>
             <strong>Sentry</strong> — registro de errores técnicos para poder solucionarlos.
@@ -84,7 +82,7 @@ export default function PrivacyPage() {
       <Section title="Cuánto tiempo los guardamos">
         <p>
           Guardamos tus datos mientras tengas una cuenta activa. Puedes borrar tu cuenta tú
-          mismo en cualquier momento desde la pestaña Piso (&quot;Borrar mi cuenta&quot;): se elimina
+          mismo en cualquier momento desde la pestaña Inicio (&quot;Borrar mi cuenta&quot;): se elimina
           tu correo y tus credenciales, sales del piso y tu nombre pasa a mostrarse como &quot;Usuario
           eliminado&quot; en el historial de gastos de tus compañeros, que se conserva para que sus
           cuentas sigan cuadrando.

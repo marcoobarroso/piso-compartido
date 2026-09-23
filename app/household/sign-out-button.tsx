@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import { signOut } from "@/app/actions/auth";
 import { createClient } from "@/lib/supabase/client";
+import { disableNativePush } from "@/lib/native-push";
 import { Button } from "@/components/ui/button";
 
 /** Antes de cerrar sesión se da de baja este dispositivo de los avisos push;
@@ -10,6 +11,7 @@ import { Button } from "@/components/ui/button";
  * siguiente persona que entrase aquí no podría registrarse). */
 async function removePushSubscription() {
   try {
+    await disableNativePush();
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
     const registration = await navigator.serviceWorker.getRegistration();
     const subscription = await registration?.pushManager.getSubscription();

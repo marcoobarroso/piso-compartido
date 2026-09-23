@@ -44,5 +44,16 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // Con la sesión ya iniciada, la pantalla de login no pinta nada (p. ej. al
+  // volver desde la política de privacidad): se manda a su piso.
+  if (user && request.nextUrl.pathname === '/login') {
+    const url = request.nextUrl.clone()
+    url.pathname = '/'
+    url.search = ''
+    const redirect = NextResponse.redirect(url)
+    supabaseResponse.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie))
+    return redirect
+  }
+
   return supabaseResponse
 }

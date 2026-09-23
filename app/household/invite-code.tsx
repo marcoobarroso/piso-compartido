@@ -38,7 +38,9 @@ export function InviteCode({
   }
 
   function shareOnWhatsapp() {
-    const message = `Únete a nuestro piso "${householdName}" en Piso Compartido para llevar gastos, tareas y la compra: ${inviteLink()}`;
+    // El enlace se abre en el navegador; quien tenga la app de iOS instalada
+    // se une metiendo el código en la pantalla de unirse a un piso.
+    const message = `Únete a nuestro piso "${householdName}" en Piso Compartido para llevar gastos, tareas y la compra: ${inviteLink()}\n\nSi usas la app, entra y únete con el código ${code}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank");
   }
 
