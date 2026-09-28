@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Piso Compartido',
-    short_name: 'Piso',
+    name: 'Rumis',
+    short_name: 'Rumis',
     description: 'Gastos, tareas y compra compartidos entre compañeros de piso',
     start_url: '/',
     display: 'standalone',

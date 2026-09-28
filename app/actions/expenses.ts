@@ -305,9 +305,11 @@ export async function deleteRecurringExpense(formData: FormData): Promise<Recurr
   revalidatePath("/household/expenses");
 }
 
-export async function generateRecurringNow(): Promise<RecurringFormState> {
+export async function generateRecurringNow(householdId: string): Promise<RecurringFormState> {
   const supabase = await createClient();
-  const { error } = await supabase.rpc("generate_recurring_expenses");
+  const { error } = await supabase.rpc("generate_recurring_expenses_for_household", {
+    _household_id: householdId,
+  });
 
   if (error) {
     return { error: "No se han podido generar los gastos fijos: " + error.message };

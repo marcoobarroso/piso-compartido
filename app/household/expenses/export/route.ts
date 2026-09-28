@@ -52,7 +52,7 @@ export async function GET() {
   }, {});
 
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "Piso Compartido";
+  workbook.creator = "Rumis";
   workbook.created = new Date();
 
   // ---- Hoja "Gastos": una fila por gasto, fácil de escanear de un vistazo ----

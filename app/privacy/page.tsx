@@ -1,7 +1,7 @@
 import { BackLink } from "./back-link";
 
 export const metadata = {
-  title: "Política de privacidad · Piso Compartido",
+  title: "Política de privacidad · Rumis",
 };
 
 export default function PrivacyPage() {
@@ -18,7 +18,7 @@ export default function PrivacyPage() {
 
       <Section title="Quién es el responsable">
         <p>
-          Piso Compartido es una aplicación desarrollada y gestionada por{" "}
+          Rumis es una aplicación desarrollada y gestionada por{" "}
           <strong>Marco Barroso Martín</strong>. Para cualquier consulta sobre esta política o sobre tus
           datos, puedes escribir a{" "}
           <a href="mailto:marcbarro.07@gmail.com" className="text-primary hover:underline">

@@ -1,4 +1,4 @@
-# Lanzar Piso Compartido en la App Store
+# Lanzar Rumis en la App Store
 
 ## Cómo funciona (y por qué los cambios llegan al instante)
 
@@ -52,8 +52,8 @@ open ios/App/App.xcodeproj
 Target **App** → pestaña **Signing & Capabilities**:
 1. Marcar **Automatically manage signing**.
 2. **Team**: su cuenta de desarrollador.
-3. **Bundle Identifier**: `com.marcobarroso.pisocompartido`. Si Apple dice que no
-   está disponible, poner otro (p. ej. `com.<suapellido>.pisocompartido`) y
+3. **Bundle Identifier**: `com.marcobarroso.rumis`. Si Apple dice que no
+   está disponible, poner otro (p. ej. `com.<suapellido>.rumis`) y
    avisar a Marco: hay que cambiarlo también en `capacitor.config.ts` (`appId`) y
    en el secreto `APNS_BUNDLE_ID` de Supabase.
 4. Debe aparecer la capability **Push Notifications** (ya viene configurada). Si no
@@ -61,7 +61,7 @@ Target **App** → pestaña **Signing & Capabilities**:
 
 ### 3.3 Clave de notificaciones (APNs)
 En https://developer.apple.com/account → **Certificates, IDs & Profiles** → **Keys** → **+**:
-1. Nombre: `Piso Compartido Push`, marcar **Apple Push Notifications service (APNs)**
+1. Nombre: `Rumis Push`, marcar **Apple Push Notifications service (APNs)**
    (entorno *Sandbox & Production*) → Continue → Register.
 2. **Download**: se descarga un fichero `AuthKey_XXXXXXXXXX.p8` (**solo se puede
    descargar una vez**, guardarlo bien).
@@ -91,8 +91,8 @@ Conectar el iPhone al Mac, elegirlo arriba en Xcode y pulsar ▶. Comprobar:
 
 ### 3.6 Crear la app en App Store Connect
 https://appstoreconnect.apple.com → **Apps** → **+** → Nueva app:
-plataforma iOS, nombre **Piso Compartido**, idioma principal **Español (España)**,
-el Bundle ID de 3.2, SKU `pisocompartido`, acceso completo.
+plataforma iOS, nombre **Rumis**, idioma principal **Español (España)**,
+el Bundle ID de 3.2, SKU `rumis`, acceso completo.
 
 ### 3.7 Subir la build
 En Xcode, destino **Any iOS Device (arm64)** → **Product → Archive** → en el
@@ -114,7 +114,7 @@ Con los datos del apartado 4. Seleccionar la build → **Añadir para revisión*
 
 ## 4. Datos de la ficha
 
-- **Nombre**: Piso Compartido
+- **Nombre**: Rumis
 - **Subtítulo** (máx. 30): Gastos, tareas y compra
 - **Categoría**: Estilo de vida (secundaria: Productividad)
 - **Precio**: Gratis · **Disponibilidad**: todos los países o solo España
@@ -127,7 +127,7 @@ Con los datos del apartado 4. Seleccionar la build → **Añadir para revisión*
 
 **Descripción**:
 ```
-Piso Compartido reúne en un solo sitio todo lo que necesitas para convivir sin discusiones.
+Rumis reúne en un solo sitio todo lo que necesitas para convivir sin discusiones.
 
 GASTOS
 Apunta lo que pagas y repártelo entre quienes corresponda, a partes iguales o con importes exactos. La app calcula quién debe a quién con el mínimo de pagos y te deja registrarlos. Gastos fijos que se generan solos, categorías, estadísticas y exportación a Excel.

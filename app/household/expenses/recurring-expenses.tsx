@@ -122,7 +122,7 @@ export function RecurringExpenses({
             disabled={isPending}
             onClick={() =>
               startTransition(async () => {
-                const result = await generateRecurringNow();
+                const result = await generateRecurringNow(householdId);
                 if (result?.error) toast.error(result.error);
               })
             }

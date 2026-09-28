@@ -10,7 +10,7 @@
 // Variables de entorno necesarias (Edge Functions -> Secrets):
 //   VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY           (Web Push)
 //   APNS_KEY_ID, APNS_TEAM_ID, APNS_PRIVATE_KEY   (iOS; si faltan, se omite)
-//   APNS_BUNDLE_ID (opcional, por defecto com.marcobarroso.pisocompartido)
+//   APNS_BUNDLE_ID (opcional, por defecto com.marcobarroso.rumis)
 // SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY ya los inyecta Supabase solo.
 
 import webpush from "npm:web-push@3.6.7";
@@ -23,7 +23,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const APNS_KEY_ID = Deno.env.get("APNS_KEY_ID");
 const APNS_TEAM_ID = Deno.env.get("APNS_TEAM_ID");
 const APNS_PRIVATE_KEY = Deno.env.get("APNS_PRIVATE_KEY");
-const APNS_BUNDLE_ID = Deno.env.get("APNS_BUNDLE_ID") ?? "com.marcobarroso.pisocompartido";
+const APNS_BUNDLE_ID = Deno.env.get("APNS_BUNDLE_ID") ?? "com.marcobarroso.rumis";
 
 webpush.setVapidDetails(
   "mailto:marcbarro.07@gmail.com",
@@ -66,7 +66,7 @@ async function sendWebPush(userId: string, message: Message) {
             endpoint: sub.endpoint,
             keys: { p256dh: sub.p256dh, auth: sub.auth },
           },
-          JSON.stringify({ title: "Piso Compartido", body: message.body, link: message.link })
+          JSON.stringify({ title: "Rumis", body: message.body, link: message.link })
         );
       } catch (err) {
         const statusCode = (err as { statusCode?: number }).statusCode;
@@ -159,7 +159,7 @@ async function sendApns(userId: string, message: Message) {
 
   const body = JSON.stringify({
     aps: {
-      alert: { title: "Piso Compartido", body: message.body },
+      alert: { title: "Rumis", body: message.body },
       sound: "default",
     },
     link: message.link,

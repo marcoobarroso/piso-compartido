@@ -7,8 +7,8 @@ import type { CapacitorConfig } from "@capacitor/cli";
 // De webDir solo se usa public/offline.html (errorPath), que se muestra si
 // no hay conexión en vez de dejar la pantalla en blanco.
 const config: CapacitorConfig = {
-  appId: "com.marcobarroso.pisocompartido",
-  appName: "Piso Compartido",
+  appId: "com.marcobarroso.rumis",
+  appName: "Rumis",
   webDir: "public",
   backgroundColor: "#0a0a0a",
   server: {
