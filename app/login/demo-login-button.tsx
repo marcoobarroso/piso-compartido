@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { safeNextPath } from "@/lib/safe-redirect";
@@ -12,6 +12,7 @@ const DEMO_EMAIL = "demo1@example.com";
 const DEMO_PASSWORD = "DemoPiso2026!";
 
 export function DemoLoginButton() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const next = safeNextPath(searchParams.get("next"));
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,8 @@ export function DemoLoginButton() {
       return;
     }
 
-    window.location.href = next;
+    router.push(next);
+    router.refresh();
   }
 
   return (

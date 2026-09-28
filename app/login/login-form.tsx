@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useTransition, ViewTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Home, Mail, KeyRound } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { safeNextPath } from "@/lib/safe-redirect";
@@ -22,12 +22,16 @@ import { toast } from "sonner";
 const OTP_LENGTH = 8;
 
 export function LoginForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const next = safeNextPath(searchParams.get("next"));
   const [step, setStep] = useState<"email" | "code">("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
+  // Envolver el cambio de paso en una transición es lo que activa el
+  // <ViewTransition> de abajo (un setState suelto no la dispara).
+  const [, startStepTransition] = useTransition();
 
   async function sendCode(e: React.SyntheticEvent) {
     e.preventDefault();
@@ -59,7 +63,7 @@ export function LoginForm() {
     }
 
     if (step === "code") toast.success("Código reenviado. Revisa tu correo.");
-    setStep("code");
+    startStepTransition(() => setStep("code"));
   }
 
   async function verifyCode(e: React.FormEvent) {
@@ -79,7 +83,15 @@ export function LoginForm() {
       return;
     }
 
-    window.location.href = next;
+    // router.push (en vez de window.location.href) evita una recarga
+    // completa del navegador: la sesión ya quedó en las cookies al
+    // verificar el código, así que el servidor la ve igual en la
+    // siguiente navegación, pero de forma instantánea y animada como el
+    // resto de la app. refresh() fuerza a releer los Server Components
+    // con la sesión nueva por si el router tenía algo en caché de antes
+    // de iniciar sesión.
+    router.push(next);
+    router.refresh();
   }
 
   return (
@@ -97,6 +109,7 @@ export function LoginForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <ViewTransition key={step} name="login-step" share="auto" enter="auto" default="none">
           {step === "email" ? (
             <form onSubmit={sendCode} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
@@ -145,8 +158,10 @@ export function LoginForm() {
                   type="button"
                   className="text-muted-foreground hover:underline"
                   onClick={() => {
-                    setStep("email");
-                    setCode("");
+                    startStepTransition(() => {
+                      setStep("email");
+                      setCode("");
+                    });
                   }}
                 >
                   Cambiar email
@@ -162,6 +177,7 @@ export function LoginForm() {
               </div>
             </form>
           )}
+          </ViewTransition>
         </CardContent>
       </Card>
     </div>
