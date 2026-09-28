@@ -165,3 +165,85 @@
     @apply font-sans;
   }
 }
+
+/* Transiciones entre secciones (View Transitions API vía React
+ * <ViewTransition>, ver app/household/*\/page.tsx). Sale rápido, entra un
+ * poco más despacio con un leve ascenso — evita el corte seco al cambiar de
+ * pestaña. La cabecera y la barra de navegación se anclan aparte (más abajo)
+ * para que solo se anime el contenido de en medio. */
+:root {
+  --duration-page-exit: 110ms;
+  --duration-page-enter: 200ms;
+}
+
+::view-transition-old(.page-exit) {
+  animation: var(--duration-page-exit) ease-in both piso-fade-out;
+}
+::view-transition-new(.page-enter) {
+  animation: var(--duration-page-enter) ease-out var(--duration-page-exit) both piso-fade-in;
+}
+
+@keyframes piso-fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes piso-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* La cabecera y la barra de abajo son el ancla visual: si se animan a la vez
+ * que el contenido da la sensación de que toda la pantalla "salta". */
+::view-transition-group(site-header),
+::view-transition-group(bottom-nav) {
+  animation: none;
+}
+::view-transition-old(site-header),
+::view-transition-old(bottom-nav) {
+  display: none;
+}
+::view-transition-new(site-header),
+::view-transition-new(bottom-nav) {
+  animation: none;
+}
+
+/* El overlay de la transición captura los clics; se los devolvemos a la
+ * página real para no perder un toque hecho mientras anima. */
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* Los esqueletos de carga (loading.tsx) solo se hacen visibles si la
+ * navegación tarda de verdad más de 180ms — la mayoría de cambios de
+ * sección ya son más rápidos que eso, así que no llegan a parpadear. */
+@keyframes loading-reveal {
+  to {
+    opacity: 1;
+  }
+}
+.loading-delayed {
+  opacity: 0;
+  animation: loading-reveal 1ms 180ms forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .loading-delayed {
+    animation-delay: 0ms;
+  }
+}

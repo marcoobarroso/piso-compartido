@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function Loading() {
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
+    <div className="loading-delayed mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
       <Card>
         <CardHeader>
           <Skeleton className="h-6 w-40" />

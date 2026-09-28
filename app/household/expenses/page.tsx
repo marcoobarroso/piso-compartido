@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import { Receipt, Repeat, History } from "lucide-react";
 import { requireHousehold, getHouseholdMembers, resolveNames } from "@/lib/household";
 import { computeBalances, simplifyDebts } from "@/lib/debt-simplify";
@@ -81,174 +82,176 @@ export default async function ExpensesPage() {
   }, {});
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
-      <Card>
-        <CardHeader>
-          <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <Receipt className="size-4" />
-          </div>
-          <CardTitle className="text-base">Añadir gasto</CardTitle>
-          <CardDescription>A partes iguales o por importes exactos</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AddExpenseForm householdId={household.id} members={members} />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <Repeat className="size-4" />
-          </div>
-          <CardTitle className="text-base">Gastos fijos</CardTitle>
-          <CardDescription>Alquiler, wifi, luz... se crean solos cada mes</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <RecurringExpenses
-            householdId={household.id}
-            members={members}
-            recurring={recurring ?? []}
-          />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Saldos del piso</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          {members.map((m) => {
-            const amount = balances.get(m.userId) ?? 0;
-            return (
-              <div key={m.userId} className="flex items-center gap-3 text-sm">
-                <Avatar className="size-8">
-                  <AvatarFallback className="bg-primary/15 text-xs text-primary">
-                    {m.displayName.slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="flex-1">
-                  {m.displayName}
-                  {m.userId === user.id && (
-                    <span className="text-muted-foreground"> (tú)</span>
-                  )}
-                </span>
-                <span
-                  className={cn(
-                    "text-sm font-medium",
-                    amount > 0 && "text-green-600",
-                    amount < 0 && "text-destructive",
-                    amount === 0 && "text-muted-foreground"
-                  )}
-                >
-                  {amount === 0
-                    ? "al día"
-                    : amount > 0
-                      ? `le deben ${formatCents(amount)}`
-                      : `debe ${formatCents(-amount)}`}
-                </span>
-              </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      {transactions.length > 0 && (
+    <ViewTransition enter="page-enter" exit="page-exit" default="none">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Para saldar cuentas</CardTitle>
+            <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <Receipt className="size-4" />
+            </div>
+            <CardTitle className="text-base">Añadir gasto</CardTitle>
+            <CardDescription>A partes iguales o por importes exactos</CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-3">
-            {transactions.map((t) => (
-              <div
-                key={`${t.from}-${t.to}`}
-                className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <span className="text-sm">
-                  {nameOf(t.from)} debe {formatCents(t.amountCents)} a {nameOf(t.to)}
-                </span>
-                {(t.from === user.id || t.to === user.id) && (
-                  <SettleButton
-                    householdId={household.id}
-                    fromUserId={t.from}
-                    fromName={nameOf(t.from)}
-                    toUserId={t.to}
-                    toName={nameOf(t.to)}
-                    amountCents={t.amountCents}
-                    perspective={t.from === user.id ? "debtor" : "creditor"}
-                  />
-                )}
-              </div>
-            ))}
+          <CardContent>
+            <AddExpenseForm householdId={household.id} members={members} />
           </CardContent>
         </Card>
-      )}
 
-      <Card>
-        <CardHeader>
-          <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <History className="size-4" />
-          </div>
-          <CardTitle className="text-base">Historial de pagos</CardTitle>
-          <CardDescription>Si un pago se queda descuadrado, puedes deshacerlo aquí</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <SettlementHistory
-            settlements={(settlements ?? []).map((s) => ({
-              id: s.id,
-              fromName: nameOf(s.from_user_id),
-              toName: nameOf(s.to_user_id),
-              amount_cents: s.amount_cents,
-              settled_at: s.settled_at,
-            }))}
-          />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Gastos recientes</CardTitle>
-          <CardAction>
-            <ExportButton />
-          </CardAction>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          {(expenses ?? []).length === 0 && (
-            <div className="flex flex-col items-center gap-2 py-6 text-center">
-              <Receipt className="size-8 text-muted-foreground/50" />
-              <p className="text-sm text-muted-foreground">
-                Todavía no hay gastos. Añade el primero arriba.
-              </p>
+        <Card>
+          <CardHeader>
+            <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <Repeat className="size-4" />
             </div>
-          )}
-          {(expenses ?? []).map((e) => {
-            const category = (e.category ?? "otros") as ExpenseCategory;
-            const CategoryIcon = CATEGORY_ICONS[category];
-            const participants = participantsByExpense[e.id] ?? [];
-            const participantsLabel =
-              participants.length === members.length ? "entre todos" : `entre ${participants.join(", ")}`;
-            return (
-              <div key={e.id} className="flex items-center gap-3 text-sm">
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-                  <CategoryIcon className="size-4" />
+            <CardTitle className="text-base">Gastos fijos</CardTitle>
+            <CardDescription>Alquiler, wifi, luz... se crean solos cada mes</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RecurringExpenses
+              householdId={household.id}
+              members={members}
+              recurring={recurring ?? []}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Saldos del piso</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            {members.map((m) => {
+              const amount = balances.get(m.userId) ?? 0;
+              return (
+                <div key={m.userId} className="flex items-center gap-3 text-sm">
+                  <Avatar className="size-8">
+                    <AvatarFallback className="bg-primary/15 text-xs text-primary">
+                      {m.displayName.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="flex-1">
+                    {m.displayName}
+                    {m.userId === user.id && (
+                      <span className="text-muted-foreground"> (tú)</span>
+                    )}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-sm font-medium",
+                      amount > 0 && "text-green-600",
+                      amount < 0 && "text-destructive",
+                      amount === 0 && "text-muted-foreground"
+                    )}
+                  >
+                    {amount === 0
+                      ? "al día"
+                      : amount > 0
+                        ? `le deben ${formatCents(amount)}`
+                        : `debe ${formatCents(-amount)}`}
+                  </span>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium">{e.description}</p>
-                  <p className="text-xs break-words text-muted-foreground">
-                    Pagó {nameOf(e.paid_by)} · {participantsLabel} · {formatDate(e.expense_date)}
-                  </p>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        {transactions.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Para saldar cuentas</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              {transactions.map((t) => (
+                <div
+                  key={`${t.from}-${t.to}`}
+                  className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <span className="text-sm">
+                    {nameOf(t.from)} debe {formatCents(t.amountCents)} a {nameOf(t.to)}
+                  </span>
+                  {(t.from === user.id || t.to === user.id) && (
+                    <SettleButton
+                      householdId={household.id}
+                      fromUserId={t.from}
+                      fromName={nameOf(t.from)}
+                      toUserId={t.to}
+                      toName={nameOf(t.to)}
+                      amountCents={t.amountCents}
+                      perspective={t.from === user.id ? "debtor" : "creditor"}
+                    />
+                  )}
                 </div>
-                <span className="shrink-0 font-medium">{formatCents(e.amount_cents)}</span>
-                <ExpenseRowActions
-                  expenseId={e.id}
-                  description={e.description}
-                  amountCents={e.amount_cents}
-                  category={category}
-                />
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        <Card>
+          <CardHeader>
+            <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <History className="size-4" />
+            </div>
+            <CardTitle className="text-base">Historial de pagos</CardTitle>
+            <CardDescription>Si un pago se queda descuadrado, puedes deshacerlo aquí</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SettlementHistory
+              settlements={(settlements ?? []).map((s) => ({
+                id: s.id,
+                fromName: nameOf(s.from_user_id),
+                toName: nameOf(s.to_user_id),
+                amount_cents: s.amount_cents,
+                settled_at: s.settled_at,
+              }))}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Gastos recientes</CardTitle>
+            <CardAction>
+              <ExportButton />
+            </CardAction>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            {(expenses ?? []).length === 0 && (
+              <div className="flex flex-col items-center gap-2 py-6 text-center">
+                <Receipt className="size-8 text-muted-foreground/50" />
+                <p className="text-sm text-muted-foreground">
+                  Todavía no hay gastos. Añade el primero arriba.
+                </p>
               </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-    </div>
+            )}
+            {(expenses ?? []).map((e) => {
+              const category = (e.category ?? "otros") as ExpenseCategory;
+              const CategoryIcon = CATEGORY_ICONS[category];
+              const participants = participantsByExpense[e.id] ?? [];
+              const participantsLabel =
+                participants.length === members.length ? "entre todos" : `entre ${participants.join(", ")}`;
+              return (
+                <div key={e.id} className="flex items-center gap-3 text-sm">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                    <CategoryIcon className="size-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium">{e.description}</p>
+                    <p className="text-xs break-words text-muted-foreground">
+                      Pagó {nameOf(e.paid_by)} · {participantsLabel} · {formatDate(e.expense_date)}
+                    </p>
+                  </div>
+                  <span className="shrink-0 font-medium">{formatCents(e.amount_cents)}</span>
+                  <ExpenseRowActions
+                    expenseId={e.id}
+                    description={e.description}
+                    amountCents={e.amount_cents}
+                    category={category}
+                  />
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      </div>
+    </ViewTransition>
   );
 }

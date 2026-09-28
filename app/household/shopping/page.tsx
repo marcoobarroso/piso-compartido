@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import { ShoppingCart } from "lucide-react";
 import { requireHousehold, getHouseholdMembers, resolveNames } from "@/lib/household";
 import { ShoppingList } from "./shopping-list";
@@ -32,24 +33,26 @@ export default async function ShoppingPage() {
   );
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
-      <Card>
-        <CardHeader>
-          <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <ShoppingCart className="size-4" />
-          </div>
-          <CardTitle className="text-base">Lista de la compra</CardTitle>
-          <CardDescription>Se actualiza al momento para todos</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ShoppingList
-            householdId={household.id}
-            currentUserId={user.id}
-            memberNames={memberNames}
-            initialItems={items ?? []}
-          />
-        </CardContent>
-      </Card>
-    </div>
+    <ViewTransition enter="page-enter" exit="page-exit" default="none">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
+        <Card>
+          <CardHeader>
+            <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <ShoppingCart className="size-4" />
+            </div>
+            <CardTitle className="text-base">Lista de la compra</CardTitle>
+            <CardDescription>Se actualiza al momento para todos</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ShoppingList
+              householdId={household.id}
+              currentUserId={user.id}
+              memberNames={memberNames}
+              initialItems={items ?? []}
+            />
+          </CardContent>
+        </Card>
+      </div>
+    </ViewTransition>
   );
 }

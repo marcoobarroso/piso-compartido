@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import Link from "next/link";
 import { Receipt, ListChecks, ShoppingCart, ChevronRight } from "lucide-react";
 import { getHouseholdMembers, requireHousehold } from "@/lib/household";
@@ -87,121 +88,123 @@ export default async function HouseholdPage({
     members.find((m) => m.userId === user.id)?.role === "admin" && !isDemo;
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
-      {joinError === "other" && (
-        <p className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-          No te has podido unir a ese piso porque ya perteneces a otro. Sal de tu piso actual
-          primero si quieres cambiar.
-        </p>
-      )}
-      <div className="flex flex-col gap-2">
-        <StatCard
-          href="/household/expenses"
-          icon={<Receipt className="size-4" />}
-          label="Gastos"
-          value={
-            myBalance === 0
-              ? "Estás al día"
-              : myBalance > 0
-                ? `Te deben ${formatCents(myBalance)}`
-                : `Debes ${formatCents(-myBalance)}`
-          }
-          tone={myBalance > 0 ? "positive" : myBalance < 0 ? "negative" : "neutral"}
-        />
-        <StatCard
-          href="/household/chores"
-          icon={<ListChecks className="size-4" />}
-          label="Tareas"
-          value={
-            !chore
-              ? "Nada pendiente para ti"
-              : `${chore.name} · ${
-                  isOverdue(nextChore!.due_date)
-                    ? "atrasada"
-                    : isToday(nextChore!.due_date)
-                      ? "hoy"
-                      : formatDate(nextChore!.due_date)
-                }`
-          }
-          tone={chore && isOverdue(nextChore!.due_date) ? "negative" : "neutral"}
-        />
-        <StatCard
-          href="/household/shopping"
-          icon={<ShoppingCart className="size-4" />}
-          label="Compra"
-          value={
-            !pendingShoppingCount
-              ? "Lista vacía"
-              : `${pendingShoppingCount} artículo${pendingShoppingCount === 1 ? "" : "s"} pendiente${pendingShoppingCount === 1 ? "" : "s"}`
-          }
-          tone="neutral"
-        />
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Invita a tus compañeros</CardTitle>
-          <CardDescription>Comparte este código o el enlace</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <InviteCode
-            code={household.invite_code}
-            householdId={household.id}
-            householdName={household.name}
-            isAdmin={isAdmin}
+    <ViewTransition enter="page-enter" exit="page-exit" default="none">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
+        {joinError === "other" && (
+          <p className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+            No te has podido unir a ese piso porque ya perteneces a otro. Sal de tu piso actual
+            primero si quieres cambiar.
+          </p>
+        )}
+        <div className="flex flex-col gap-2">
+          <StatCard
+            href="/household/expenses"
+            icon={<Receipt className="size-4" />}
+            label="Gastos"
+            value={
+              myBalance === 0
+                ? "Estás al día"
+                : myBalance > 0
+                  ? `Te deben ${formatCents(myBalance)}`
+                  : `Debes ${formatCents(-myBalance)}`
+            }
+            tone={myBalance > 0 ? "positive" : myBalance < 0 ? "negative" : "neutral"}
           />
-          {isAdmin && (
-            <RenameHouseholdForm householdId={household.id} name={household.name} />
-          )}
-        </CardContent>
-      </Card>
+          <StatCard
+            href="/household/chores"
+            icon={<ListChecks className="size-4" />}
+            label="Tareas"
+            value={
+              !chore
+                ? "Nada pendiente para ti"
+                : `${chore.name} · ${
+                    isOverdue(nextChore!.due_date)
+                      ? "atrasada"
+                      : isToday(nextChore!.due_date)
+                        ? "hoy"
+                        : formatDate(nextChore!.due_date)
+                  }`
+            }
+            tone={chore && isOverdue(nextChore!.due_date) ? "negative" : "neutral"}
+          />
+          <StatCard
+            href="/household/shopping"
+            icon={<ShoppingCart className="size-4" />}
+            label="Compra"
+            value={
+              !pendingShoppingCount
+                ? "Lista vacía"
+                : `${pendingShoppingCount} artículo${pendingShoppingCount === 1 ? "" : "s"} pendiente${pendingShoppingCount === 1 ? "" : "s"}`
+            }
+            tone="neutral"
+          />
+        </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Compañeros de piso</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          {members.map((m) => (
-            <div key={m.userId} className="flex items-center gap-3">
-              <Avatar>
-                <AvatarFallback className="bg-primary/15 text-primary">
-                  {m.displayName.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <span className="flex-1 text-sm">{m.displayName}</span>
-              {m.role === "admin" && <Badge variant="secondary">admin</Badge>}
-              {isAdmin && m.userId !== user.id && (
-                <RemoveMemberButton
-                  householdId={household.id}
-                  userId={m.userId}
-                  displayName={m.displayName}
-                />
-              )}
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Invita a tus compañeros</CardTitle>
+            <CardDescription>Comparte este código o el enlace</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <InviteCode
+              code={household.invite_code}
+              householdId={household.id}
+              householdName={household.name}
+              isAdmin={isAdmin}
+            />
+            {isAdmin && (
+              <RenameHouseholdForm householdId={household.id} name={household.name} />
+            )}
+          </CardContent>
+        </Card>
 
-      {isDemo ? (
-        <p className="text-center text-xs text-muted-foreground">
-          Estás viendo un piso de demostración: puedes probar gastos, tareas y compra, pero no
-          salir ni echar a nadie.
-        </p>
-      ) : (
-        <LeaveHouseholdButton householdId={household.id} isLastMember={members.length === 1} />
-      )}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Compañeros de piso</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            {members.map((m) => (
+              <div key={m.userId} className="flex items-center gap-3">
+                <Avatar>
+                  <AvatarFallback className="bg-primary/15 text-primary">
+                    {m.displayName.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="flex-1 text-sm">{m.displayName}</span>
+                {m.role === "admin" && <Badge variant="secondary">admin</Badge>}
+                {isAdmin && m.userId !== user.id && (
+                  <RemoveMemberButton
+                    householdId={household.id}
+                    userId={m.userId}
+                    displayName={m.displayName}
+                  />
+                )}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
-      <SignOutButton />
+        {isDemo ? (
+          <p className="text-center text-xs text-muted-foreground">
+            Estás viendo un piso de demostración: puedes probar gastos, tareas y compra, pero no
+            salir ni echar a nadie.
+          </p>
+        ) : (
+          <LeaveHouseholdButton householdId={household.id} isLastMember={members.length === 1} />
+        )}
 
-      {!isDemo && <DeleteAccountButton />}
+        <SignOutButton />
 
-      <Link
-        href="/privacy"
-        className="text-center text-xs text-muted-foreground hover:underline"
-      >
-        Política de privacidad
-      </Link>
-    </div>
+        {!isDemo && <DeleteAccountButton />}
+
+        <Link
+          href="/privacy"
+          className="text-center text-xs text-muted-foreground hover:underline"
+        >
+          Política de privacidad
+        </Link>
+      </div>
+    </ViewTransition>
   );
 }
 

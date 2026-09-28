@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import { ChartColumn, Receipt, ListChecks, Tag } from "lucide-react";
 import { requireHousehold, getHouseholdMembers } from "@/lib/household";
 import { formatCents, parseDateOnly } from "@/lib/format";
@@ -102,59 +103,61 @@ export default async function StatsPage() {
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
-      <div className="flex gap-2">
-        <StatTile label="Gastado este mes" value={formatCents(totalThisMonth)} />
-        <StatTile label="Tareas hechas este mes" value={String(choresThisMonth)} />
+    <ViewTransition enter="page-enter" exit="page-exit" default="none">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-4">
+        <div className="flex gap-2">
+          <StatTile label="Gastado este mes" value={formatCents(totalThisMonth)} />
+          <StatTile label="Tareas hechas este mes" value={String(choresThisMonth)} />
+        </div>
+
+        <Card>
+          <CardHeader>
+            <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <ChartColumn className="size-4" />
+            </div>
+            <CardTitle className="text-base">Gasto del piso por mes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <MonthlyBarChart columns={monthlyColumns} emptyMessage="Todavía no hay gastos registrados." />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <Receipt className="size-4" />
+            </div>
+            <CardTitle className="text-base">Quién ha pagado más (este mes)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <BarRowChart rows={expenseRows} emptyMessage="Nadie ha pagado nada todavía este mes." />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <Tag className="size-4" />
+            </div>
+            <CardTitle className="text-base">Gasto por categoría (este mes)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <BarRowChart rows={categoryRows} emptyMessage="Todavía no hay gastos categorizados este mes." />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <ListChecks className="size-4" />
+            </div>
+            <CardTitle className="text-base">Tareas completadas (este mes)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <BarRowChart rows={choreRows} emptyMessage="Nadie ha completado tareas todavía este mes." />
+          </CardContent>
+        </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <ChartColumn className="size-4" />
-          </div>
-          <CardTitle className="text-base">Gasto del piso por mes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <MonthlyBarChart columns={monthlyColumns} emptyMessage="Todavía no hay gastos registrados." />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <Receipt className="size-4" />
-          </div>
-          <CardTitle className="text-base">Quién ha pagado más (este mes)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <BarRowChart rows={expenseRows} emptyMessage="Nadie ha pagado nada todavía este mes." />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <Tag className="size-4" />
-          </div>
-          <CardTitle className="text-base">Gasto por categoría (este mes)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <BarRowChart rows={categoryRows} emptyMessage="Todavía no hay gastos categorizados este mes." />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <div className="mb-1 flex size-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <ListChecks className="size-4" />
-          </div>
-          <CardTitle className="text-base">Tareas completadas (este mes)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <BarRowChart rows={choreRows} emptyMessage="Nadie ha completado tareas todavía este mes." />
-        </CardContent>
-      </Card>
-    </div>
+    </ViewTransition>
   );
 }

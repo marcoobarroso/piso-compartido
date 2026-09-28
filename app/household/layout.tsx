@@ -21,7 +21,10 @@ export default async function HouseholdLayout({
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b bg-background/95 px-4 py-3 backdrop-blur">
+      <header
+        className="sticky top-0 z-30 flex items-center justify-between border-b bg-background/95 px-4 py-3 backdrop-blur"
+        style={{ viewTransitionName: "site-header" }}
+      >
         <span className="font-semibold">{household.name}</span>
         <div className="flex items-center">
           <NotificationBell userId={user.id} initialNotifications={notifications ?? []} />
