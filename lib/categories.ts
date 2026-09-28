@@ -32,10 +32,10 @@ export const CATEGORY_ICONS: Record<ExpenseCategory, LucideIcon> = {
 /** Same categorical palette used in Stats' charts, so a category reads as
  * the same color everywhere in the app (and in the exported spreadsheet). */
 export const CATEGORY_HEX: Record<ExpenseCategory, string> = {
-  comida: "#2a78d6",
-  suministros: "#eb6834",
-  ocio: "#1baf7a",
-  hogar: "#eda100",
-  transporte: "#e87ba4",
-  otros: "#008300",
+  comida: "#c2532c",
+  suministros: "#1f74a8",
+  ocio: "#8f7015",
+  hogar: "#6142b8",
+  transporte: "#457f3a",
+  otros: "#7d3fa3",
 };
