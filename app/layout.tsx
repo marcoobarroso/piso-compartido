@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { InstallPrompt } from "@/components/install-prompt";
 import { RegisterServiceWorker } from "@/components/register-service-worker";
 import { ThemeProvider } from "@/components/theme-provider";
+import { BottomBannerProvider } from "@/lib/bottom-banner-stack";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -50,11 +51,13 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          {children}
-          <Toaster />
-          <InstallPrompt />
-          <RegisterServiceWorker />
-          <Analytics />
+          <BottomBannerProvider>
+            {children}
+            <Toaster />
+            <InstallPrompt />
+            <RegisterServiceWorker />
+            <Analytics />
+          </BottomBannerProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -77,6 +77,8 @@ async function sendWebPush(userId: string, message: Message) {
             method: "DELETE",
             headers: restHeaders,
           });
+        } else {
+          console.error("webpush", statusCode, err);
         }
       }
     })

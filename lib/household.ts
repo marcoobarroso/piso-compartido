@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -22,9 +23,14 @@ export type HouseholdMember = {
 export async function resolveCurrentUser(
   supabase: Awaited<ReturnType<typeof createClient>>
 ) {
+  // getSession() lee la cookie ya validada en vez de volver a llamar a la
+  // API de Auth (getUser() haría una segunda ida y vuelta de red idéntica a
+  // la que ya hace proxy.ts en cada request): el proxy es quien garantiza
+  // que, si esta página se está renderizando, la sesión ya es válida.
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user ?? null;
   if (!user) {
     redirect("/login");
   }
@@ -55,8 +61,12 @@ export async function resolveCurrentUser(
  * Loads the current user's household, redirecting to /profile/setup or
  * /onboarding if either step isn't done yet. Every page under a household
  * should start here instead of re-querying membership itself.
+ *
+ * Wrapped in React's cache() because the layout and its page both call this
+ * within the same request — without it, every /household/* navigation did
+ * two auth.getUser() round trips plus two identical profile queries.
  */
-export async function requireHousehold() {
+export const requireHousehold = cache(async function requireHousehold() {
   const supabase = await createClient();
   const { user, displayName, household } = await resolveCurrentUser(supabase);
 
@@ -68,7 +78,7 @@ export async function requireHousehold() {
   }
 
   return { supabase, user, household };
-}
+});
 
 export async function getHouseholdMembers(
   supabase: Awaited<ReturnType<typeof createClient>>,

@@ -62,13 +62,15 @@ export function ChoresCalendar({
   const [month, setMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState(today);
 
-  const gridStart = startOfGrid(month);
-  const gridDays = Array.from({ length: 42 }, (_, i) => {
-    const d = new Date(gridStart);
-    d.setDate(gridStart.getDate() + i);
-    return d;
-  });
-  const gridEnd = gridDays[gridDays.length - 1];
+  const { gridDays, gridStart, gridEnd } = useMemo(() => {
+    const start = startOfGrid(month);
+    const days = Array.from({ length: 42 }, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      return d;
+    });
+    return { gridDays: days, gridStart: start, gridEnd: days[days.length - 1] };
+  }, [month]);
 
   const eventsByDay = useMemo(() => {
     const map = new Map<string, CalendarEvent[]>();
@@ -94,7 +96,7 @@ export function ChoresCalendar({
       });
     }
     return map;
-  }, [chores, gridStart.getTime(), gridEnd.getTime()]);
+  }, [chores, gridStart, gridEnd]);
 
   const selectedEvents = eventsByDay.get(dateKey(selectedDate)) ?? [];
 

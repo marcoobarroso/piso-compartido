@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
 export const alt = "Piso Compartido";
@@ -5,6 +7,9 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function Image() {
+  const iconFile = await readFile(join(process.cwd(), "public/icon-512.png"));
+  const iconSrc = `data:image/png;base64,${iconFile.toString("base64")}`;
+
   return new ImageResponse(
     (
       <div
@@ -20,23 +25,13 @@ export default async function Image() {
           padding: "90px",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 100,
-            height: 100,
-            borderRadius: 26,
-            backgroundColor: "#171717",
-            color: "#fafafa",
-            fontSize: 52,
-            fontWeight: 700,
-            marginBottom: 44,
-          }}
-        >
-          P
-        </div>
+        <img
+          src={iconSrc}
+          alt=""
+          width={100}
+          height={100}
+          style={{ borderRadius: 26, marginBottom: 44 }}
+        />
         <div
           style={{
             display: "flex",
