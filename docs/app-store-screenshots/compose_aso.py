@@ -71,11 +71,11 @@ def compose(screenshot_path, line1, line2, out_path, font_size=104):
 
 if __name__ == "__main__":
     jobs = [
-        ("tab-inicio.png", "Cuentas claras", "entre compañeros", "01-inicio.png"),
-        ("tab-gastos.png", "Reparte gastos", "sin líos", "02-gastos.png"),
-        ("tareas-calendario.png", "Turnos de limpieza", "automáticos", "03-tareas.png"),
-        ("tab-compra.png", "La compra,", "siempre al día", "04-compra.png"),
-        ("tab-stats.png", "Estadísticas claras", "de cada mes", "05-stats.png"),
+        ("tab-inicio.png", "Tu piso,", "bajo control", "01-inicio.png"),
+        ("tab-gastos.png", "Cuentas claras,", "cero líos", "02-gastos.png"),
+        ("tareas-calendario.png", "Turnos justos,", "sin pelear", "03-tareas.png"),
+        ("tab-compra.png", "La compra,", "siempre lista", "04-compra.png"),
+        ("tab-stats.png", "Vuestro progreso,", "mes a mes", "05-stats.png"),
     ]
     src_dir = sys.argv[1] if len(sys.argv) > 1 else "."
     out_dir = sys.argv[2] if len(sys.argv) > 2 else "."

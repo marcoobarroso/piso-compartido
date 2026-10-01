@@ -34,6 +34,17 @@ final class ScreenshotTourUITests: XCTestCase {
             guard button.waitForExistence(timeout: 10) else { continue }
             button.tap()
             Thread.sleep(forTimeInterval: 1.5) // let async data load settle
+
+            // Gastos/Tareas open on their "add" form — scroll past it so the
+            // screenshot shows the actual balances/task list instead of an
+            // empty-looking form (this is what App Store screenshots use).
+            if tab == "Gastos" {
+                app.swipeUp()
+                Thread.sleep(forTimeInterval: 0.3)
+            } else if tab == "Tareas" {
+                app.swipeUp()
+                Thread.sleep(forTimeInterval: 0.3)
+            }
             shot(app, "tab-\(tab.lowercased())")
 
             if tab == "Tareas" {
