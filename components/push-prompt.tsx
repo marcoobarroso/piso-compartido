@@ -1,19 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Bell } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useIsClient } from "@/lib/use-is-client";
 import { useRegisterPushPromptVisible } from "@/lib/bottom-banner-stack";
-import {
-  enableNativePush,
-  handleNativePushTaps,
-  isNativeApp,
-  nativePushPermission,
-} from "@/lib/native-push";
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -51,40 +44,14 @@ async function saveSubscription(userId: string) {
 }
 
 export function PushPrompt({ userId }: { userId: string }) {
-  const [nativeVisible, setNativeVisible] = useState(false);
   const [webDismissed, setWebDismissed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
-  const router = useRouter();
   const isClient = useIsClient();
-  const native = isClient && isNativeApp();
   const webSupported =
     isClient &&
-    !native &&
     "Notification" in window &&
     "serviceWorker" in navigator &&
     "PushManager" in window;
-
-  // App nativa de iOS: avisos por APNs en vez de Web Push.
-  useEffect(() => {
-    if (!isNativeApp()) return;
-
-    const stopTaps = handleNativePushTaps((path) => router.push(path));
-    nativePushPermission()
-      .then((permission) => {
-        if (permission === "granted") {
-          // Ya dio permiso: se vuelve a guardar el token por si ha cambiado
-          // o por si en este iPhone ha entrado otra cuenta.
-          enableNativePush().catch(() => {});
-        } else if (
-          permission !== "denied" &&
-          !localStorage.getItem("push-prompt-dismissed")
-        ) {
-          setNativeVisible(true);
-        }
-      })
-      .catch(() => {});
-    return stopTaps;
-  }, [userId, router]);
 
   useEffect(() => {
     if (!webSupported) return;
@@ -97,29 +64,23 @@ export function PushPrompt({ userId }: { userId: string }) {
     }
   }, [webSupported, userId]);
 
-  const webVisible =
+  const visible =
     webSupported &&
     Notification.permission === "default" &&
     !webDismissed &&
     !localStorage.getItem("push-prompt-dismissed");
 
-  const visible = native ? nativeVisible : webVisible;
   useRegisterPushPromptVisible(visible);
 
   async function subscribe() {
     setSubscribing(true);
     try {
-      if (native) {
-        if (await enableNativePush()) toast.success("Avisos activados");
-        setNativeVisible(false);
-      } else {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          await saveSubscription(userId);
-          toast.success("Avisos activados");
-        }
-        setWebDismissed(true);
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        await saveSubscription(userId);
+        toast.success("Avisos activados");
       }
+      setWebDismissed(true);
     } catch {
       toast.error("No se han podido activar los avisos. Inténtalo de nuevo más tarde.");
     } finally {
@@ -129,11 +90,7 @@ export function PushPrompt({ userId }: { userId: string }) {
 
   function dismiss() {
     localStorage.setItem("push-prompt-dismissed", "1");
-    if (native) {
-      setNativeVisible(false);
-    } else {
-      setWebDismissed(true);
-    }
+    setWebDismissed(true);
   }
 
   if (!visible) return null;

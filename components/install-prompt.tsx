@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Capacitor } from "@capacitor/core";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { usePushPromptVisible } from "@/lib/bottom-banner-stack";
@@ -28,10 +27,6 @@ export function InstallPrompt() {
   const pushPromptVisible = usePushPromptVisible();
 
   useEffect(() => {
-    // Ya es una app instalada de verdad dentro de Capacitor: no tiene
-    // sentido ofrecer "instalarla" a mayores.
-    if (Capacitor.isNativePlatform()) return;
-
     function handler(e: Event) {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
@@ -40,7 +35,7 @@ export function InstallPrompt() {
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  if (Capacitor.isNativePlatform() || !deferredPrompt || dismissed) return null;
+  if (!deferredPrompt || dismissed) return null;
 
   return (
     <div
