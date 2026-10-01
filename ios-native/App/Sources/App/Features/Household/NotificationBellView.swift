@@ -65,11 +65,19 @@ struct NotificationBellView: View {
     }
 
     private func markRead(_ notification: AppNotification) async {
-        guard !notification.isRead else { return }
-        if let index = notifications.firstIndex(where: { $0.id == notification.id }) {
-            notifications[index].isRead = true
+        if !notification.isRead {
+            if let index = notifications.firstIndex(where: { $0.id == notification.id }) {
+                notifications[index].isRead = true
+            }
+            try? await notificationsRepo.markRead(id: notification.id)
         }
-        try? await notificationsRepo.markRead(id: notification.id)
+        // Mirrors notification-bell.tsx's router.push(notification.link) —
+        // reuses the same tab-switch bus RootTabView already wires up for
+        // tapping a push notification, so the mapping stays in one place.
+        if let link = notification.link {
+            showList = false
+            NotificationCenter.default.post(name: .rumisPushTapped, object: nil, userInfo: ["link": link])
+        }
     }
 
     private func markAllRead() async {

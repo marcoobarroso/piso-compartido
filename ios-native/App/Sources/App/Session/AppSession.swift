@@ -34,6 +34,10 @@ final class AppSession {
     /// since those paths all funnel back through `resolve()` via `refresh()`.
     private(set) var pendingInviteCode: String?
     private(set) var joinLinkError: String?
+    /// Set right before `signOut()` in AccountSettingsView's delete-account
+    /// flow, read once by LoginView to show the "cuenta borrada" banner —
+    /// mirrors the web's /login?deleted=1 (app/login/deleted-notice.tsx).
+    private(set) var accountJustDeleted = false
 
     private let authRepo = AuthRepository()
     private let profileRepo = ProfileRepository()
@@ -150,6 +154,18 @@ final class AppSession {
 
     func signOut() async throws {
         try await authRepo.signOut()
+    }
+
+    /// Call right before `signOut()` when the sign-out is a consequence of
+    /// deleting the account, so LoginView knows to show the confirmation.
+    func noteAccountDeleted() {
+        accountJustDeleted = true
+    }
+
+    /// LoginView calls this once it has shown the banner, so it doesn't
+    /// reappear on a later, unrelated sign-out.
+    func acknowledgeAccountDeleted() {
+        accountJustDeleted = false
     }
 
     /// Called from `RumisApp`'s `.onContinueUserActivity` when the user taps

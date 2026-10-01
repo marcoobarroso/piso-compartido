@@ -4,10 +4,10 @@ import RumisCore
 
 /// Mirrors app/household/stats/page.tsx: headline tiles + four charts built
 /// from the same three fetches (expenses, chore assignments, members),
-/// computed client-side instead of with per-chart Supabase queries. Unlike
-/// the web page (which scopes the bar-row charts to the current month),
+/// computed client-side instead of with per-chart Supabase queries.
 /// "Quién ha pagado más", "Gasto por categoría" and "Tareas completadas"
-/// here are all-time aggregates, per this rewrite's spec.
+/// are scoped to the current month, same as the web page — only the
+/// 6-month "Gasto mensual" chart spans further back, on both sides.
 struct StatsView: View {
     @Environment(AppSession.self) private var session
 
@@ -40,8 +40,8 @@ struct StatsView: View {
                     HStack(spacing: 12) {
                         StatTile(label: "Gastado este mes", value: Format.formatCents(totalThisMonthCents))
                         StatTile(
-                            label: "Total del piso",
-                            value: Format.formatCents(totalAllTimeCents),
+                            label: "Tareas hechas este mes",
+                            value: String(choresThisMonthCount),
                             tint: ChartPalette.color(at: 1)
                         )
                     }
@@ -54,7 +54,7 @@ struct StatsView: View {
                         }
                     }
 
-                    RCard(title: "Quién ha pagado más", systemImage: "banknote.fill") {
+                    RCard(title: "Quién ha pagado más (este mes)", systemImage: "banknote.fill") {
                         if paidByRows.isEmpty {
                             EmptyChartPlaceholder()
                         } else {
@@ -62,7 +62,7 @@ struct StatsView: View {
                         }
                     }
 
-                    RCard(title: "Gasto por categoría", systemImage: "tag.fill") {
+                    RCard(title: "Gasto por categoría (este mes)", systemImage: "tag.fill") {
                         if categoryRows.isEmpty {
                             EmptyChartPlaceholder()
                         } else {
@@ -70,7 +70,7 @@ struct StatsView: View {
                         }
                     }
 
-                    RCard(title: "Tareas completadas", systemImage: "checkmark.circle.fill") {
+                    RCard(title: "Tareas completadas (este mes)", systemImage: "checkmark.circle.fill") {
                         if choreRows.isEmpty {
                             EmptyChartPlaceholder()
                         } else {
@@ -190,19 +190,26 @@ struct StatsView: View {
 
     // MARK: - Aggregation
 
-    private var totalThisMonthCents: Int {
+    private func isInCurrentMonth(_ date: Date) -> Bool {
         let calendar = Calendar.current
-        let nowComponents = calendar.dateComponents([.year, .month], from: Date())
-        return expenses.reduce(0) { sum, expense in
-            guard let date = Format.parseDateOnly(expense.expenseDate) else { return sum }
-            let components = calendar.dateComponents([.year, .month], from: date)
-            guard components.year == nowComponents.year, components.month == nowComponents.month else { return sum }
-            return sum + expense.amountCents
+        let now = calendar.dateComponents([.year, .month], from: Date())
+        let components = calendar.dateComponents([.year, .month], from: date)
+        return components.year == now.year && components.month == now.month
+    }
+
+    private var expensesThisMonth: [Expense] {
+        expenses.filter { expense in
+            guard let date = Format.parseDateOnly(expense.expenseDate) else { return false }
+            return isInCurrentMonth(date)
         }
     }
 
-    private var totalAllTimeCents: Int {
-        expenses.reduce(0) { $0 + $1.amountCents }
+    private var totalThisMonthCents: Int {
+        expensesThisMonth.reduce(0) { $0 + $1.amountCents }
+    }
+
+    private var choresThisMonthCount: Int {
+        assignments.filter { $0.status == "done" && ($0.completedAt).map(isInCurrentMonth) == true }.count
     }
 
     private struct MonthBucket: Identifiable {
@@ -246,7 +253,7 @@ struct StatsView: View {
 
     private var paidByRows: [NamedAmount] {
         var totals: [UUID: Int] = [:]
-        for expense in expenses {
+        for expense in expensesThisMonth {
             totals[expense.paidBy, default: 0] += expense.amountCents
         }
         return totals
@@ -263,7 +270,7 @@ struct StatsView: View {
         // Keyed by rawValue (String) rather than the enum itself, since
         // ExpenseCategory doesn't explicitly declare Hashable.
         var totals: [String: Int] = [:]
-        for expense in expenses {
+        for expense in expensesThisMonth {
             totals[expense.category.rawValue, default: 0] += expense.amountCents
         }
         return ExpenseCategory.allCases
@@ -284,7 +291,11 @@ struct StatsView: View {
     private var choreRows: [NamedCount] {
         var counts: [UUID: Int] = [:]
         for assignment in assignments where assignment.status == "done" {
-            counts[assignment.assignedTo, default: 0] += 1
+            guard let completedBy = assignment.completedBy,
+                  let completedAt = assignment.completedAt,
+                  isInCurrentMonth(completedAt)
+            else { continue }
+            counts[completedBy, default: 0] += 1
         }
         return counts
             .map { NamedCount(name: memberName(for: $0.key), count: $0.value) }

@@ -17,6 +17,8 @@ struct LoginView: View {
 
     private let authRepo = AuthRepository()
 
+    @Environment(AppSession.self) private var session
+
     @State private var step: Step = .email
     @State private var email = ""
     @State private var code = ""
@@ -36,6 +38,20 @@ struct LoginView: View {
                 }
                 .frame(width: 56, height: 56)
                 .padding(.top, 40)
+
+                if session.accountJustDeleted {
+                    Text("Tu cuenta se ha borrado correctamente.")
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .padding(12)
+                        .frame(maxWidth: .infinity)
+                        .background(RTheme.muted)
+                        .clipShape(RoundedRectangle(cornerRadius: RTheme.Radius.lg))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: RTheme.Radius.lg)
+                                .stroke(RTheme.border, lineWidth: 1)
+                        )
+                }
 
                 RCard(title: "Rumis", description: stepDescription) {
                     Group {
@@ -155,6 +171,7 @@ struct LoginView: View {
         guard !cleanEmail.isEmpty else { return }
 
         errorMessage = nil
+        session.acknowledgeAccountDeleted()
         isLoading = true
         Task {
             do {
@@ -167,7 +184,13 @@ struct LoginView: View {
                 }
             } catch {
                 isLoading = false
-                errorMessage = "No se ha podido enviar el código: \(error.localizedDescription)"
+                // Mirrors login-form.tsx's rate-limit detection.
+                let message = error.localizedDescription
+                let tooSoon = message.range(of: "seconds", options: .caseInsensitive) != nil
+                    || message.range(of: "rate limit", options: .caseInsensitive) != nil
+                errorMessage = tooSoon
+                    ? "Espera un minuto antes de pedir otro código."
+                    : "No se ha podido enviar el código: \(message)"
             }
         }
     }
@@ -190,6 +213,7 @@ struct LoginView: View {
 
     private func signInDemo() {
         errorMessage = nil
+        session.acknowledgeAccountDeleted()
         isDemoLoading = true
         Task {
             do {

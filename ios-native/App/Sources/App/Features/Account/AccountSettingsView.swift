@@ -365,6 +365,7 @@ struct AccountSettingsView: View {
         defer { deleting = false }
         do {
             try await householdRepo.deleteAccount()
+            session.noteAccountDeleted()
             try await session.signOut()
         } catch {
             errorMessage = "No se ha podido borrar la cuenta: \(error.localizedDescription)"
