@@ -24,13 +24,6 @@ struct ChoresCalendarTab: View {
         return f
     }()
 
-    private static let keyFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd"
-        f.timeZone = .current
-        return f
-    }()
-
     private static let selectedDayFormatter: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "es_ES")
@@ -80,7 +73,7 @@ struct ChoresCalendarTab: View {
 
             for (occIndex, occ) in occurrences.enumerated() {
                 guard occ.date >= gridStart, let assignedUUID = UUID(uuidString: occ.assignedTo) else { continue }
-                let key = Self.keyFormatter.string(from: occ.date)
+                let key = Format.dateOnlyString(from: occ.date)
                 map[key, default: []].append(
                     CalendarEvent(chore: chore, assignedTo: assignedUUID, isReal: occIndex == 0, colorIndex: index)
                 )
@@ -90,7 +83,7 @@ struct ChoresCalendarTab: View {
     }
 
     private func events(on day: Date) -> [CalendarEvent] {
-        eventsByDay[Self.keyFormatter.string(from: day)] ?? []
+        eventsByDay[Format.dateOnlyString(from: day)] ?? []
     }
 
     var body: some View {
@@ -129,6 +122,7 @@ struct ChoresCalendarTab: View {
             Image(systemName: "sparkles")
                 .font(.title2)
                 .foregroundStyle(RTheme.mutedForeground.opacity(0.5))
+                .accessibilityHidden(true)
             Text("Todavía no hay tareas domésticas. Añade la primera arriba.")
                 .font(.subheadline)
                 .foregroundStyle(RTheme.mutedForeground)

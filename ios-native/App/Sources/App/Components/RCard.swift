@@ -19,7 +19,7 @@ struct RCard<Content: View>: View {
                                 .fill(RTheme.accent)
                             Image(systemName: systemImage)
                                 .foregroundStyle(RTheme.accentForeground)
-                                .font(.system(size: 15, weight: .semibold))
+                                .font(.subheadline.weight(.semibold))
                         }
                         .frame(width: 32, height: 32)
                     }

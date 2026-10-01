@@ -55,6 +55,7 @@ struct ChoresListTab: View {
             Image(systemName: "sparkles")
                 .font(.title2)
                 .foregroundStyle(RTheme.mutedForeground.opacity(0.5))
+                .accessibilityHidden(true)
             Text("Todavía no hay tareas domésticas. Añade la primera arriba.")
                 .font(.subheadline)
                 .foregroundStyle(RTheme.mutedForeground)
@@ -133,10 +134,7 @@ struct ChoresListTab: View {
         // original due date), so a late completion shifts the whole
         // rotation later instead of leaving it stuck in the past.
         let nextDate = ChoreRotation.nextDueDate(from: Date(), recurrenceDays: chore.recurrenceDays)
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = .current
-        let nextDateStr = formatter.string(from: nextDate)
+        let nextDateStr = Format.dateOnlyString(from: nextDate)
 
         completingId = assignment.id
         errorMessage = nil

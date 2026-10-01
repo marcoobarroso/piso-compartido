@@ -152,7 +152,8 @@ struct HouseholdHomeView: View {
     }
 
     private func shareURL(inviteCode: String) -> URL? {
-        let message = "Únete a nuestro piso en Rumis: https://piso-compartido.vercel.app/join/\(inviteCode)"
+        let joinURL = AppConfig.webBaseURL.appendingPathComponent("join/\(inviteCode)")
+        let message = "Únete a nuestro piso en Rumis: \(joinURL.absoluteString)"
         guard let encoded = message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
             return nil
         }

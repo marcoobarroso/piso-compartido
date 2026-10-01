@@ -87,7 +87,7 @@ struct AddExpenseCard: View {
             description: description.trimmingCharacters(in: .whitespaces),
             amountCents: totalCents,
             category: category,
-            expenseDate: ExpenseDateFormat.string(from: date),
+            expenseDate: Format.dateOnlyString(from: date),
             createdBy: userId
         )
 

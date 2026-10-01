@@ -102,6 +102,7 @@ struct ChoresHistoryTab: View {
             Image(systemName: "clock.arrow.circlepath")
                 .font(.title2)
                 .foregroundStyle(RTheme.mutedForeground.opacity(0.5))
+                .accessibilityHidden(true)
             Text("Todavía no se ha completado ninguna tarea.")
                 .font(.subheadline)
                 .foregroundStyle(RTheme.mutedForeground)

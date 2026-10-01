@@ -130,7 +130,7 @@ struct EditExpenseSheet: View {
             description: description.trimmingCharacters(in: .whitespaces),
             amountCents: newTotalCents,
             category: category,
-            expenseDate: ExpenseDateFormat.string(from: date)
+            expenseDate: Format.dateOnlyString(from: date)
         )
 
         let success = await store.updateExpense(id: expense.id, fields: fields, shares: shares, householdId: householdId)

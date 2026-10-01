@@ -27,6 +27,20 @@ public enum Format {
         return calendar.date(from: components)
     }
 
+    private static let dateOnlyFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = .current
+        return formatter
+    }()
+
+    /// Inverse of `parseDateOnly` — formats a `Date` as the "YYYY-MM-DD"
+    /// string the `expenses.expense_date`/`chore_assignments.due_date`
+    /// columns expect, in the device's local calendar day.
+    public static func dateOnlyString(from date: Date) -> String {
+        dateOnlyFormatter.string(from: date)
+    }
+
     private static let shortDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "es_ES")

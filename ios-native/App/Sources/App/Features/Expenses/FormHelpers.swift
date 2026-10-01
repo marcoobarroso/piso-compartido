@@ -5,22 +5,6 @@ import RumisCore
 // RumisCore/Sources/RumisCore/MoneyParsing.swift) — tested there, used
 // here unqualified via the `import RumisCore` above.
 
-/// Builds the "YYYY-MM-DD" string the `expenses.expense_date` column (and
-/// RumisCore.Format.parseDateOnly) expects, in the user's local calendar
-/// day — not ISO8601 with a time/timezone, which would shift the date.
-enum ExpenseDateFormat {
-    private static let formatter: DateFormatter = {
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd"
-        df.timeZone = .current
-        return df
-    }()
-
-    static func string(from date: Date) -> String {
-        formatter.string(from: date)
-    }
-}
-
 /// Validation + share-building for the add-expense form: a custom split
 /// must sum to exactly the total before it's considered valid, mirroring
 /// app/actions/expenses.ts's addExpense check.

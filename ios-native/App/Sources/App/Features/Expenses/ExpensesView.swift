@@ -75,7 +75,7 @@ struct ExpensesView: View {
         isExporting = true
         defer { isExporting = false }
         do {
-            var request = URLRequest(url: URL(string: "https://piso-compartido.vercel.app/household/expenses/export")!)
+            var request = URLRequest(url: AppConfig.webBaseURL.appendingPathComponent("household/expenses/export"))
             let token = try await supabase.auth.session.accessToken
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             let (fileURL, _) = try await URLSession.shared.download(for: request)

@@ -263,10 +263,7 @@ struct ChoresView: View {
 
         let calendar = Calendar.current
         let dueDate = calendar.date(byAdding: .day, value: newRecurrenceDays, to: Date()) ?? Date()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = .current
-        let dueDateStr = formatter.string(from: dueDate)
+        let dueDateStr = Format.dateOnlyString(from: dueDate)
 
         let trimmedDescription = newDescription.trimmingCharacters(in: .whitespacesAndNewlines)
         let insert = ChoreInsert(
