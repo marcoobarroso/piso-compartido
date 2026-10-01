@@ -25,6 +25,10 @@ struct RumisApp: App {
                     }
                     session.start()
                 }
+                .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+                    guard let url = activity.webpageURL else { return }
+                    session.handleInviteLink(url)
+                }
         }
     }
 }

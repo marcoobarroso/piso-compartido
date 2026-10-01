@@ -1,5 +1,6 @@
 import Foundation
 import Supabase
+import RumisCore
 
 enum AppRoute: Equatable {
     case loading
@@ -27,6 +28,12 @@ final class AppSession {
     /// launch) — without this, `route` stays `.loading` forever with no way
     /// out, since there's no previous good state to fall back to.
     private(set) var loadError: String?
+    /// Set by an incoming "/join/CODE" Universal Link. Consumed the next
+    /// time `resolve()` lands on `.needsHousehold` — which also covers the
+    /// case where the link arrives before login/profile setup are done,
+    /// since those paths all funnel back through `resolve()` via `refresh()`.
+    private(set) var pendingInviteCode: String?
+    private(set) var joinLinkError: String?
 
     private let authRepo = AuthRepository()
     private let profileRepo = ProfileRepository()
@@ -78,6 +85,16 @@ final class AppSession {
             }
 
             guard let membership = try await householdRepo.fetchMyMembership(userId: userId) else {
+                if let code = pendingInviteCode {
+                    pendingInviteCode = nil
+                    do {
+                        try await joinHousehold(code: code)
+                    } catch {
+                        joinLinkError = "No se ha podido unir al piso con ese enlace."
+                        route = .needsHousehold
+                    }
+                    return
+                }
                 route = .needsHousehold
                 return
             }
@@ -133,5 +150,25 @@ final class AppSession {
 
     func signOut() async throws {
         try await authRepo.signOut()
+    }
+
+    /// Called from `RumisApp`'s `.onContinueUserActivity` when the user taps
+    /// a "/join/CODE" Universal Link. If we're already in the right state to
+    /// act on it, join immediately — otherwise stash it for `resolve()` to
+    /// pick up once login/profile setup finish.
+    func handleInviteLink(_ url: URL) {
+        guard let code = InviteLink.inviteCode(from: url) else { return }
+        if route == .needsHousehold {
+            pendingInviteCode = nil
+            Task {
+                do {
+                    try await joinHousehold(code: code)
+                } catch {
+                    joinLinkError = "No se ha podido unir al piso con ese enlace."
+                }
+            }
+        } else {
+            pendingInviteCode = code
+        }
     }
 }

@@ -54,7 +54,7 @@ struct OnboardingView: View {
                     }
                 }
 
-                if let errorMessage {
+                if let errorMessage = errorMessage ?? session.joinLinkError {
                     Text(errorMessage)
                         .font(.footnote)
                         .foregroundStyle(RTheme.destructive)

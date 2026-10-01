@@ -8,14 +8,12 @@ struct AuthRepository {
         try await supabase.auth.signInWithOTP(email: email, shouldCreateUser: true)
     }
 
-    /// NOTE: supabase-js verifies this flow with `type: "email"`, but
-    /// supabase-swift's `EmailOTPType` has no `.email` case (only `.signup`,
-    /// `.invite`, `.magiclink`, `.recovery`, `.emailChange`) — `.magiclink`
-    /// is the closest documented match for a `signInWithOTP(email:)` code.
-    /// VERIFY against the real project on first device test: if GoTrue
-    /// rejects it, try `.signup` for a brand-new user's first-ever code.
+    /// Matches the web app's `supabase.auth.verifyOtp({ type: "email" })` —
+    /// supabase-swift's `EmailOTPType.email` is that same generic email-OTP
+    /// case (`.magiclink` is for the separate magic-link-URL flow, not the
+    /// numeric code `signInWithOTP(email:)` sends).
     func verifyEmailCode(email: String, code: String) async throws {
-        try await supabase.auth.verifyOTP(email: email, token: code, type: .magiclink)
+        try await supabase.auth.verifyOTP(email: email, token: code, type: .email)
     }
 
     func signInDemo(email: String, password: String) async throws {
