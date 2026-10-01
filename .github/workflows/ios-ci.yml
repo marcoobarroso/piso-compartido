@@ -1,0 +1,37 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test-rumiscore:
+    name: RumisCore tests
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: swift test
+        working-directory: ios-native/RumisCore
+        run: swift test
+
+  build-app:
+    name: Build Rumis (simulator)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        working-directory: ios-native
+        run: xcodegen generate
+      - name: Build for simulator (no signing)
+        working-directory: ios-native
+        run: |
+          xcodebuild build \
+            -project Rumis.xcodeproj \
+            -scheme Rumis \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
