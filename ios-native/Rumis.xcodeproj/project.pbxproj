@@ -1,0 +1,842 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00B7E919AFC41D815E8C78D0 /* RumisPushDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCBDD7EB1041EFB4F8F91E00 /* RumisPushDelegate.swift */; };
+		02D654D0B3D80202AEE82288 /* PushManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841DD801DF0B0CE14BB47C95 /* PushManager.swift */; };
+		0CC342E39F05DD9734728481 /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21EE39AF8114000B16EE65AE /* Buttons.swift */; };
+		0F4829B12F96DA8A66A1F198 /* ChoresListTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42063BA0E7409C51A1322E4A /* ChoresListTab.swift */; };
+		1253B4AC3FF894FDD1DED55B /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71E917D3FD804E46F8E26A54 /* OnboardingView.swift */; };
+		12576005238158077699124A /* EditChoreSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FC475D7589F81CC9B73DE11 /* EditChoreSheet.swift */; };
+		19FD7787425A643C86CE2C1E /* NotificationsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27152DA4AA6027FB5B43453C /* NotificationsRepository.swift */; };
+		1A02AB968AB80332E09C242A /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = FD18F797A39DBAEAF73D2588 /* Sentry */; };
+		1AE0516F93951B1A1D3AABB9 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7CBD544F06C23E2335ED535 /* ProfileRepository.swift */; };
+		1E58287F70A8E9EF6AADD73D /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A7B185DA4942FD40945198 /* Models.swift */; };
+		1E8A3844A5CE9466978798C5 /* BalancesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575D1DB04E0D61F5D7C185AC /* BalancesCard.swift */; };
+		1FB367CC177E295CA8EA4CE5 /* CoreFlowsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA2FE8EE37CC833C3C10316 /* CoreFlowsUITests.swift */; };
+		24ED9A9B43810F70E7F44277 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 84A2EFD9AAFC655F84178E22 /* Supabase */; };
+		277B97F59BA2258D70B0B6BE /* RumisCore in Frameworks */ = {isa = PBXBuildFile; productRef = 691266A89C83B8FE22697700 /* RumisCore */; };
+		2C805687B6E553A6E7300244 /* RPCParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B79D726575D81969A5E46DA /* RPCParams.swift */; };
+		2D1D9D82AE13B07F6273CCA1 /* LabeledField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA6C12B09774D02C634EFB6 /* LabeledField.swift */; };
+		2E6B69791A0C3C2F04178207 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DB4FEB3B9731329A95F866 /* NetworkMonitor.swift */; };
+		2EA6A583A2ACEEDFDB3BC1AE /* RCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37712F7C3E6543B3FF47E92 /* RCard.swift */; };
+		318ACF38568B759C22B76AC0 /* ChoresRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625D0F07490E95F3A1DB3BC1 /* ChoresRepository.swift */; };
+		35927E865E3854DE32D97E99 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5978C5DC4DE222F9D3E0E724 /* Theme.swift */; };
+		3E92F214F49F9E60E538E75E /* ScreenshotTourUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90257A0C0E86D929264585E /* ScreenshotTourUITests.swift */; };
+		4A747EC25CC505972AE139F3 /* ChoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E02C554559AA350BE083BBD /* ChoresView.swift */; };
+		4ACCF15D86DC0381A8B02F81 /* NotificationBellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35717DC1149E002DC96E5938 /* NotificationBellView.swift */; };
+		4AE78E63E5F76C4B25FABECC /* ExpensesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0546772396582DE7280D987F /* ExpensesRepository.swift */; };
+		4F858FD56972DAA58D2F7C32 /* FormHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1CDE11A513F4A5B4B619653 /* FormHelpers.swift */; };
+		5406A4133EC4D9C1800DA606 /* TermsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 141B0979E81752BA681A8182 /* TermsView.swift */; };
+		58D45BB2F345B52BE2D32588 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BAF010038C0B50955E49C9 /* PrivacyView.swift */; };
+		69F2A77BF6039F0233A1AC9F /* ChoreFormFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2497A4CA936AC56C6415DB4E /* ChoreFormFields.swift */; };
+		6B126F73B6339322DC95246C /* AddRecurringExpenseSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14C058BEEBECBE0F115BA7E /* AddRecurringExpenseSheet.swift */; };
+		6D0EC640F91AD329F94D6E37 /* ChoresCalendarTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27EF807B18878AD18776CAC4 /* ChoresCalendarTab.swift */; };
+		72405C25F358A1A123472CC6 /* ChoresHistoryTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3361053B8427968B12AB9F4 /* ChoresHistoryTab.swift */; };
+		7A1834F1DA09DE670E665D15 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F25D3811EB46733CBF41B0E /* RootTabView.swift */; };
+		8339C66583D453FCFCC18AE6 /* PushRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D6028DED1642E85C824C8 /* PushRepository.swift */; };
+		840380099A8D7237D5CFF658 /* EditExpenseSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471DB930A8EA4B53DA69D0E1 /* EditExpenseSheet.swift */; };
+		8AD2C02253C15C28B1850804 /* CategoryPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A951B854948C370C84CBE38 /* CategoryPickerView.swift */; };
+		8B18EEE547914E0CA6C1DC77 /* ShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0B2CDBAE4D7060DE4E9C49 /* ShoppingView.swift */; };
+		8D2249621EBE1C07E65C661A /* ExpenseFormFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669AAA8CE924542C83C4BAD1 /* ExpenseFormFields.swift */; };
+		91178A4046DE735D00DECAA6 /* ShoppingRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C72EB5B90894063874B890F /* ShoppingRepository.swift */; };
+		9392468E5E6A045EDDEEC892 /* SentryConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F364B89D5504105B31944E46 /* SentryConfig.swift */; };
+		9A20EEADFC26F5F4E5F118D1 /* ExpensesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7AC3E1689E382F3FD8F8A2A /* ExpensesStore.swift */; };
+		9B546BCBB0B96F4C9D6BBFFA /* SettlementHistoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACA30C412592855219B3B15 /* SettlementHistoryCard.swift */; };
+		9DD5014B44F7125D8A90B6C5 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF689D2782FBD75032D1999F /* ProfileSetupView.swift */; };
+		A4567152611FE449DB73BBB1 /* HouseholdHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690F0709D2B70507BCC9DE10 /* HouseholdHomeView.swift */; };
+		B8795D1583B2C4D480F846C3 /* AppSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80818B78A3072A5FBF34E249 /* AppSession.swift */; };
+		C2BED809520738078B6AEA63 /* ExpensesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2E8744F8850F167DE15FD7 /* ExpensesView.swift */; };
+		C5F2D0A720017F56B6ABDC1C /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98C2B06CE5172BD7E36C330A /* StatsView.swift */; };
+		CB09E1CDD6739786A119618B /* ReviewPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 987CC0F1BF11489D54E1EC74 /* ReviewPrompt.swift */; };
+		D2736E246728323A88DB3147 /* HouseholdRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7434A62AE4B06B95E34A4B /* HouseholdRepository.swift */; };
+		DA05CEB045C9A413CFA8FDE7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920A640A6A3545D19A53F236 /* ContentView.swift */; };
+		DDACA5965EFE8271CDC49570 /* AddExpenseCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80471A3FA9F3333635DB8B7 /* AddExpenseCard.swift */; };
+		DE433D3BF28521013E008709 /* MemberPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15105FF29136E2E2D3DB5E7A /* MemberPickerView.swift */; };
+		E14F86EBCFB2DF08B640A5B4 /* RecurringExpensesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 685EB7DB569DC2E77F9F6A5C /* RecurringExpensesCard.swift */; };
+		E3F460AC045AA01C58B6058B /* SupabaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4630C64665E0096A86C0BB /* SupabaseClient.swift */; };
+		ECC6883B8D80ACA32C2EB084 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF655C4D6264461D112452A /* LoginView.swift */; };
+		ED5DCBE0840C8F10018F5C48 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48833565964AD0DFAAE22A14 /* AccountSettingsView.swift */; };
+		F06AA60ACB97537676D5CF80 /* AuthRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB435349059ADB147184D39 /* AuthRepository.swift */; };
+		F3512A21FA177D050D721E75 /* RumisApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23B959E20E944AD82544BE /* RumisApp.swift */; };
+		F48AF2C6A2ED4545A7B05314 /* SignInOutFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5616125B9AE9997DC976FD2 /* SignInOutFlowUITests.swift */; };
+		FCEC102BA14F5BB81ACDCD8A /* RecentExpensesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE33238891AC84F502C8B40 /* RecentExpensesCard.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		847DDECB963AA9809EB13B76 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 101F328B173EC84C28D4A65E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DEBCBA60980A0ED2BF6D2CD5;
+			remoteInfo = Rumis;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0546772396582DE7280D987F /* ExpensesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesRepository.swift; sourceTree = "<group>"; };
+		0B79D726575D81969A5E46DA /* RPCParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RPCParams.swift; sourceTree = "<group>"; };
+		0E02C554559AA350BE083BBD /* ChoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoresView.swift; sourceTree = "<group>"; };
+		13BAF010038C0B50955E49C9 /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
+		141B0979E81752BA681A8182 /* TermsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsView.swift; sourceTree = "<group>"; };
+		15105FF29136E2E2D3DB5E7A /* MemberPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberPickerView.swift; sourceTree = "<group>"; };
+		21EE39AF8114000B16EE65AE /* Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buttons.swift; sourceTree = "<group>"; };
+		22A8880704A63F8980F30CA7 /* RumisCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = RumisCore; path = RumisCore; sourceTree = SOURCE_ROOT; };
+		2497A4CA936AC56C6415DB4E /* ChoreFormFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoreFormFields.swift; sourceTree = "<group>"; };
+		27152DA4AA6027FB5B43453C /* NotificationsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsRepository.swift; sourceTree = "<group>"; };
+		27EF807B18878AD18776CAC4 /* ChoresCalendarTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoresCalendarTab.swift; sourceTree = "<group>"; };
+		2A951B854948C370C84CBE38 /* CategoryPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPickerView.swift; sourceTree = "<group>"; };
+		35717DC1149E002DC96E5938 /* NotificationBellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationBellView.swift; sourceTree = "<group>"; };
+		3AA6C12B09774D02C634EFB6 /* LabeledField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledField.swift; sourceTree = "<group>"; };
+		3EB435349059ADB147184D39 /* AuthRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthRepository.swift; sourceTree = "<group>"; };
+		42063BA0E7409C51A1322E4A /* ChoresListTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoresListTab.swift; sourceTree = "<group>"; };
+		471DB930A8EA4B53DA69D0E1 /* EditExpenseSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditExpenseSheet.swift; sourceTree = "<group>"; };
+		48833565964AD0DFAAE22A14 /* AccountSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsView.swift; sourceTree = "<group>"; };
+		4F23B959E20E944AD82544BE /* RumisApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RumisApp.swift; sourceTree = "<group>"; };
+		575D1DB04E0D61F5D7C185AC /* BalancesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalancesCard.swift; sourceTree = "<group>"; };
+		5978C5DC4DE222F9D3E0E724 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		625D0F07490E95F3A1DB3BC1 /* ChoresRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoresRepository.swift; sourceTree = "<group>"; };
+		669AAA8CE924542C83C4BAD1 /* ExpenseFormFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseFormFields.swift; sourceTree = "<group>"; };
+		685EB7DB569DC2E77F9F6A5C /* RecurringExpensesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurringExpensesCard.swift; sourceTree = "<group>"; };
+		690F0709D2B70507BCC9DE10 /* HouseholdHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdHomeView.swift; sourceTree = "<group>"; };
+		69391A6B8FBABAF138996DB0 /* RumisUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RumisUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F25D3811EB46733CBF41B0E /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+		71E917D3FD804E46F8E26A54 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		7FC475D7589F81CC9B73DE11 /* EditChoreSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditChoreSheet.swift; sourceTree = "<group>"; };
+		80818B78A3072A5FBF34E249 /* AppSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSession.swift; sourceTree = "<group>"; };
+		841DD801DF0B0CE14BB47C95 /* PushManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushManager.swift; sourceTree = "<group>"; };
+		920A640A6A3545D19A53F236 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		987CC0F1BF11489D54E1EC74 /* ReviewPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPrompt.swift; sourceTree = "<group>"; };
+		98C2B06CE5172BD7E36C330A /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		9C72EB5B90894063874B890F /* ShoppingRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingRepository.swift; sourceTree = "<group>"; };
+		9EA2FE8EE37CC833C3C10316 /* CoreFlowsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreFlowsUITests.swift; sourceTree = "<group>"; };
+		A14C058BEEBECBE0F115BA7E /* AddRecurringExpenseSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecurringExpenseSheet.swift; sourceTree = "<group>"; };
+		AD4630C64665E0096A86C0BB /* SupabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseClient.swift; sourceTree = "<group>"; };
+		ADF655C4D6264461D112452A /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		AE2E8744F8850F167DE15FD7 /* ExpensesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesView.swift; sourceTree = "<group>"; };
+		B1CDE11A513F4A5B4B619653 /* FormHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormHelpers.swift; sourceTree = "<group>"; };
+		B7CBD544F06C23E2335ED535 /* ProfileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRepository.swift; sourceTree = "<group>"; };
+		C5616125B9AE9997DC976FD2 /* SignInOutFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInOutFlowUITests.swift; sourceTree = "<group>"; };
+		C7AC3E1689E382F3FD8F8A2A /* ExpensesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesStore.swift; sourceTree = "<group>"; };
+		C80471A3FA9F3333635DB8B7 /* AddExpenseCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExpenseCard.swift; sourceTree = "<group>"; };
+		CACA30C412592855219B3B15 /* SettlementHistoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettlementHistoryCard.swift; sourceTree = "<group>"; };
+		D3361053B8427968B12AB9F4 /* ChoresHistoryTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoresHistoryTab.swift; sourceTree = "<group>"; };
+		D7DB4FEB3B9731329A95F866 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		DCBDD7EB1041EFB4F8F91E00 /* RumisPushDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RumisPushDelegate.swift; sourceTree = "<group>"; };
+		DCE33238891AC84F502C8B40 /* RecentExpensesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentExpensesCard.swift; sourceTree = "<group>"; };
+		DD0B2CDBAE4D7060DE4E9C49 /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
+		DE2B7DE7B1AE9634F78A627B /* Rumis.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Rumis.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E15D6028DED1642E85C824C8 /* PushRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushRepository.swift; sourceTree = "<group>"; };
+		E1A7B185DA4942FD40945198 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		E37712F7C3E6543B3FF47E92 /* RCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCard.swift; sourceTree = "<group>"; };
+		E90257A0C0E86D929264585E /* ScreenshotTourUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTourUITests.swift; sourceTree = "<group>"; };
+		EF689D2782FBD75032D1999F /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
+		F364B89D5504105B31944E46 /* SentryConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentryConfig.swift; sourceTree = "<group>"; };
+		FA7434A62AE4B06B95E34A4B /* HouseholdRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdRepository.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A26C6CEFF220BF3954AFF554 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				277B97F59BA2258D70B0B6BE /* RumisCore in Frameworks */,
+				24ED9A9B43810F70E7F44277 /* Supabase in Frameworks */,
+				1A02AB968AB80332E09C242A /* Sentry in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1AB0E28BA2BBF4FBC28F79A9 /* Expenses */ = {
+			isa = PBXGroup;
+			children = (
+				C80471A3FA9F3333635DB8B7 /* AddExpenseCard.swift */,
+				A14C058BEEBECBE0F115BA7E /* AddRecurringExpenseSheet.swift */,
+				575D1DB04E0D61F5D7C185AC /* BalancesCard.swift */,
+				2A951B854948C370C84CBE38 /* CategoryPickerView.swift */,
+				471DB930A8EA4B53DA69D0E1 /* EditExpenseSheet.swift */,
+				669AAA8CE924542C83C4BAD1 /* ExpenseFormFields.swift */,
+				C7AC3E1689E382F3FD8F8A2A /* ExpensesStore.swift */,
+				AE2E8744F8850F167DE15FD7 /* ExpensesView.swift */,
+				B1CDE11A513F4A5B4B619653 /* FormHelpers.swift */,
+				3AA6C12B09774D02C634EFB6 /* LabeledField.swift */,
+				15105FF29136E2E2D3DB5E7A /* MemberPickerView.swift */,
+				DCE33238891AC84F502C8B40 /* RecentExpensesCard.swift */,
+				685EB7DB569DC2E77F9F6A5C /* RecurringExpensesCard.swift */,
+				CACA30C412592855219B3B15 /* SettlementHistoryCard.swift */,
+			);
+			path = Expenses;
+			sourceTree = "<group>";
+		};
+		384C00614A9B6D0D36CB71DD /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				71E917D3FD804E46F8E26A54 /* OnboardingView.swift */,
+				EF689D2782FBD75032D1999F /* ProfileSetupView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		3E07679021CCC489B3DA70CD /* Shopping */ = {
+			isa = PBXGroup;
+			children = (
+				DD0B2CDBAE4D7060DE4E9C49 /* ShoppingView.swift */,
+			);
+			path = Shopping;
+			sourceTree = "<group>";
+		};
+		474189DA5A44E0C7C9D2859D /* AppUITests */ = {
+			isa = PBXGroup;
+			children = (
+				9EA2FE8EE37CC833C3C10316 /* CoreFlowsUITests.swift */,
+				E90257A0C0E86D929264585E /* ScreenshotTourUITests.swift */,
+				C5616125B9AE9997DC976FD2 /* SignInOutFlowUITests.swift */,
+			);
+			path = AppUITests;
+			sourceTree = "<group>";
+		};
+		5432A8A7482A509254BDE959 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DE2B7DE7B1AE9634F78A627B /* Rumis.app */,
+				69391A6B8FBABAF138996DB0 /* RumisUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		58CC53977AC4EA61DC36048B /* Push */ = {
+			isa = PBXGroup;
+			children = (
+				841DD801DF0B0CE14BB47C95 /* PushManager.swift */,
+				DCBDD7EB1041EFB4F8F91E00 /* RumisPushDelegate.swift */,
+			);
+			path = Push;
+			sourceTree = "<group>";
+		};
+		5F5DCDC3F6137B8B7CF3302C /* Chores */ = {
+			isa = PBXGroup;
+			children = (
+				2497A4CA936AC56C6415DB4E /* ChoreFormFields.swift */,
+				27EF807B18878AD18776CAC4 /* ChoresCalendarTab.swift */,
+				D3361053B8427968B12AB9F4 /* ChoresHistoryTab.swift */,
+				42063BA0E7409C51A1322E4A /* ChoresListTab.swift */,
+				0E02C554559AA350BE083BBD /* ChoresView.swift */,
+				7FC475D7589F81CC9B73DE11 /* EditChoreSheet.swift */,
+			);
+			path = Chores;
+			sourceTree = "<group>";
+		};
+		6D3124ECE4778E94AB4D80F0 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				5978C5DC4DE222F9D3E0E724 /* Theme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		7C9CBFD33A4AE81CA3DA1F78 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				9F812B3B0FB19941220C9336 /* Sources */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		875C431F648C786CBF8A9C11 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				3EB435349059ADB147184D39 /* AuthRepository.swift */,
+				625D0F07490E95F3A1DB3BC1 /* ChoresRepository.swift */,
+				0546772396582DE7280D987F /* ExpensesRepository.swift */,
+				FA7434A62AE4B06B95E34A4B /* HouseholdRepository.swift */,
+				27152DA4AA6027FB5B43453C /* NotificationsRepository.swift */,
+				B7CBD544F06C23E2335ED535 /* ProfileRepository.swift */,
+				E15D6028DED1642E85C824C8 /* PushRepository.swift */,
+				9C72EB5B90894063874B890F /* ShoppingRepository.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		8C1295A238FAFE0FB97F9D7F /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				21EE39AF8114000B16EE65AE /* Buttons.swift */,
+				E37712F7C3E6543B3FF47E92 /* RCard.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		8F989F568D81A1E076ED98A0 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				22A8880704A63F8980F30CA7 /* RumisCore */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		98C0FAAA08EE12D417F9555F /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				48833565964AD0DFAAE22A14 /* AccountSettingsView.swift */,
+				13BAF010038C0B50955E49C9 /* PrivacyView.swift */,
+				141B0979E81752BA681A8182 /* TermsView.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
+		9F812B3B0FB19941220C9336 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				DB5F4F56EF32EDF47199FB7A /* App */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		A467C1FC20BD1BB318A43B71 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				E1A7B185DA4942FD40945198 /* Models.swift */,
+				0B79D726575D81969A5E46DA /* RPCParams.swift */,
+				AD4630C64665E0096A86C0BB /* SupabaseClient.swift */,
+				875C431F648C786CBF8A9C11 /* Repositories */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		B87EF8DADD00451E4D40E576 /* Stats */ = {
+			isa = PBXGroup;
+			children = (
+				98C2B06CE5172BD7E36C330A /* StatsView.swift */,
+			);
+			path = Stats;
+			sourceTree = "<group>";
+		};
+		BD663242344133202BF5EFF7 = {
+			isa = PBXGroup;
+			children = (
+				7C9CBFD33A4AE81CA3DA1F78 /* App */,
+				474189DA5A44E0C7C9D2859D /* AppUITests */,
+				8F989F568D81A1E076ED98A0 /* Packages */,
+				5432A8A7482A509254BDE959 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D00D25AC22C466EEEEB643E4 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				98C0FAAA08EE12D417F9555F /* Account */,
+				E1BCC9FE0716282CD4954B5C /* Auth */,
+				5F5DCDC3F6137B8B7CF3302C /* Chores */,
+				1AB0E28BA2BBF4FBC28F79A9 /* Expenses */,
+				D32AB6EEFFBFB8724D20530F /* Household */,
+				384C00614A9B6D0D36CB71DD /* Onboarding */,
+				58CC53977AC4EA61DC36048B /* Push */,
+				3E07679021CCC489B3DA70CD /* Shopping */,
+				B87EF8DADD00451E4D40E576 /* Stats */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		D32AB6EEFFBFB8724D20530F /* Household */ = {
+			isa = PBXGroup;
+			children = (
+				690F0709D2B70507BCC9DE10 /* HouseholdHomeView.swift */,
+				35717DC1149E002DC96E5938 /* NotificationBellView.swift */,
+				6F25D3811EB46733CBF41B0E /* RootTabView.swift */,
+			);
+			path = Household;
+			sourceTree = "<group>";
+		};
+		DB5F4F56EF32EDF47199FB7A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				920A640A6A3545D19A53F236 /* ContentView.swift */,
+				4F23B959E20E944AD82544BE /* RumisApp.swift */,
+				8C1295A238FAFE0FB97F9D7F /* Components */,
+				A467C1FC20BD1BB318A43B71 /* Data */,
+				D00D25AC22C466EEEEB643E4 /* Features */,
+				E8F505A1FCDFA2E3320F4FE2 /* Session */,
+				6D3124ECE4778E94AB4D80F0 /* Theme */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E1BCC9FE0716282CD4954B5C /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				ADF655C4D6264461D112452A /* LoginView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		E8F505A1FCDFA2E3320F4FE2 /* Session */ = {
+			isa = PBXGroup;
+			children = (
+				80818B78A3072A5FBF34E249 /* AppSession.swift */,
+				D7DB4FEB3B9731329A95F866 /* NetworkMonitor.swift */,
+				987CC0F1BF11489D54E1EC74 /* ReviewPrompt.swift */,
+				F364B89D5504105B31944E46 /* SentryConfig.swift */,
+			);
+			path = Session;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9B7D3D5A461EA2460A6AD7B8 /* RumisUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4A336BD26C5F4B14461BA0B /* Build configuration list for PBXNativeTarget "RumisUITests" */;
+			buildPhases = (
+				817E0299F2E28442869F39A4 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				57CE578E72B71544C0F7DD41 /* PBXTargetDependency */,
+			);
+			name = RumisUITests;
+			packageProductDependencies = (
+			);
+			productName = RumisUITests;
+			productReference = 69391A6B8FBABAF138996DB0 /* RumisUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		DEBCBA60980A0ED2BF6D2CD5 /* Rumis */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FEF4E74D9C160BFD2988F5BE /* Build configuration list for PBXNativeTarget "Rumis" */;
+			buildPhases = (
+				5203D88ED4B5D5A9B91EA40E /* Sources */,
+				A26C6CEFF220BF3954AFF554 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Rumis;
+			packageProductDependencies = (
+				691266A89C83B8FE22697700 /* RumisCore */,
+				84A2EFD9AAFC655F84178E22 /* Supabase */,
+				FD18F797A39DBAEAF73D2588 /* Sentry */,
+			);
+			productName = Rumis;
+			productReference = DE2B7DE7B1AE9634F78A627B /* Rumis.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		101F328B173EC84C28D4A65E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					9B7D3D5A461EA2460A6AD7B8 = {
+						DevelopmentTeam = R4U5XJ6C89;
+						TestTargetID = DEBCBA60980A0ED2BF6D2CD5;
+					};
+					DEBCBA60980A0ED2BF6D2CD5 = {
+						DevelopmentTeam = R4U5XJ6C89;
+					};
+				};
+			};
+			buildConfigurationList = B97C186601D33849712C6CFC /* Build configuration list for PBXProject "Rumis" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = BD663242344133202BF5EFF7;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				26E563E6DFC1709CBF1F015A /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				DC189AE0A069A562CA06AFA2 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				53B501C3931EDA17AF062955 /* XCLocalSwiftPackageReference "RumisCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5432A8A7482A509254BDE959 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DEBCBA60980A0ED2BF6D2CD5 /* Rumis */,
+				9B7D3D5A461EA2460A6AD7B8 /* RumisUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5203D88ED4B5D5A9B91EA40E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED5DCBE0840C8F10018F5C48 /* AccountSettingsView.swift in Sources */,
+				DDACA5965EFE8271CDC49570 /* AddExpenseCard.swift in Sources */,
+				6B126F73B6339322DC95246C /* AddRecurringExpenseSheet.swift in Sources */,
+				B8795D1583B2C4D480F846C3 /* AppSession.swift in Sources */,
+				F06AA60ACB97537676D5CF80 /* AuthRepository.swift in Sources */,
+				1E8A3844A5CE9466978798C5 /* BalancesCard.swift in Sources */,
+				0CC342E39F05DD9734728481 /* Buttons.swift in Sources */,
+				8AD2C02253C15C28B1850804 /* CategoryPickerView.swift in Sources */,
+				69F2A77BF6039F0233A1AC9F /* ChoreFormFields.swift in Sources */,
+				6D0EC640F91AD329F94D6E37 /* ChoresCalendarTab.swift in Sources */,
+				72405C25F358A1A123472CC6 /* ChoresHistoryTab.swift in Sources */,
+				0F4829B12F96DA8A66A1F198 /* ChoresListTab.swift in Sources */,
+				318ACF38568B759C22B76AC0 /* ChoresRepository.swift in Sources */,
+				4A747EC25CC505972AE139F3 /* ChoresView.swift in Sources */,
+				DA05CEB045C9A413CFA8FDE7 /* ContentView.swift in Sources */,
+				12576005238158077699124A /* EditChoreSheet.swift in Sources */,
+				840380099A8D7237D5CFF658 /* EditExpenseSheet.swift in Sources */,
+				8D2249621EBE1C07E65C661A /* ExpenseFormFields.swift in Sources */,
+				4AE78E63E5F76C4B25FABECC /* ExpensesRepository.swift in Sources */,
+				9A20EEADFC26F5F4E5F118D1 /* ExpensesStore.swift in Sources */,
+				C2BED809520738078B6AEA63 /* ExpensesView.swift in Sources */,
+				4F858FD56972DAA58D2F7C32 /* FormHelpers.swift in Sources */,
+				A4567152611FE449DB73BBB1 /* HouseholdHomeView.swift in Sources */,
+				D2736E246728323A88DB3147 /* HouseholdRepository.swift in Sources */,
+				2D1D9D82AE13B07F6273CCA1 /* LabeledField.swift in Sources */,
+				ECC6883B8D80ACA32C2EB084 /* LoginView.swift in Sources */,
+				DE433D3BF28521013E008709 /* MemberPickerView.swift in Sources */,
+				1E58287F70A8E9EF6AADD73D /* Models.swift in Sources */,
+				2E6B69791A0C3C2F04178207 /* NetworkMonitor.swift in Sources */,
+				4ACCF15D86DC0381A8B02F81 /* NotificationBellView.swift in Sources */,
+				19FD7787425A643C86CE2C1E /* NotificationsRepository.swift in Sources */,
+				1253B4AC3FF894FDD1DED55B /* OnboardingView.swift in Sources */,
+				58D45BB2F345B52BE2D32588 /* PrivacyView.swift in Sources */,
+				1AE0516F93951B1A1D3AABB9 /* ProfileRepository.swift in Sources */,
+				9DD5014B44F7125D8A90B6C5 /* ProfileSetupView.swift in Sources */,
+				02D654D0B3D80202AEE82288 /* PushManager.swift in Sources */,
+				8339C66583D453FCFCC18AE6 /* PushRepository.swift in Sources */,
+				2EA6A583A2ACEEDFDB3BC1AE /* RCard.swift in Sources */,
+				2C805687B6E553A6E7300244 /* RPCParams.swift in Sources */,
+				FCEC102BA14F5BB81ACDCD8A /* RecentExpensesCard.swift in Sources */,
+				E14F86EBCFB2DF08B640A5B4 /* RecurringExpensesCard.swift in Sources */,
+				CB09E1CDD6739786A119618B /* ReviewPrompt.swift in Sources */,
+				7A1834F1DA09DE670E665D15 /* RootTabView.swift in Sources */,
+				F3512A21FA177D050D721E75 /* RumisApp.swift in Sources */,
+				00B7E919AFC41D815E8C78D0 /* RumisPushDelegate.swift in Sources */,
+				9392468E5E6A045EDDEEC892 /* SentryConfig.swift in Sources */,
+				9B546BCBB0B96F4C9D6BBFFA /* SettlementHistoryCard.swift in Sources */,
+				91178A4046DE735D00DECAA6 /* ShoppingRepository.swift in Sources */,
+				8B18EEE547914E0CA6C1DC77 /* ShoppingView.swift in Sources */,
+				C5F2D0A720017F56B6ABDC1C /* StatsView.swift in Sources */,
+				E3F460AC045AA01C58B6058B /* SupabaseClient.swift in Sources */,
+				5406A4133EC4D9C1800DA606 /* TermsView.swift in Sources */,
+				35927E865E3854DE32D97E99 /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		817E0299F2E28442869F39A4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1FB367CC177E295CA8EA4CE5 /* CoreFlowsUITests.swift in Sources */,
+				3E92F214F49F9E60E538E75E /* ScreenshotTourUITests.swift in Sources */,
+				F48AF2C6A2ED4545A7B05314 /* SignInOutFlowUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		57CE578E72B71544C0F7DD41 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DEBCBA60980A0ED2BF6D2CD5 /* Rumis */;
+			targetProxy = 847DDECB963AA9809EB13B76 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0761CA6F5B8891F6F9E3E3A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R4U5XJ6C89;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Rumis;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcobarroso.rumis;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		15C59600D4437E0917530DA0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R4U5XJ6C89;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Rumis;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcobarroso.rumis;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		2475F71D0B9556FBDD2D5CC6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		960443E80F270F752DC31559 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B8F51EF93A5C6F6C07847887 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = R4U5XJ6C89;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcobarroso.RumisUITests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Rumis;
+			};
+			name = Debug;
+		};
+		C0A6CD67E62588825A9FEEC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = R4U5XJ6C89;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.marcobarroso.RumisUITests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Rumis;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B97C186601D33849712C6CFC /* Build configuration list for PBXProject "Rumis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				960443E80F270F752DC31559 /* Debug */,
+				2475F71D0B9556FBDD2D5CC6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C4A336BD26C5F4B14461BA0B /* Build configuration list for PBXNativeTarget "RumisUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B8F51EF93A5C6F6C07847887 /* Debug */,
+				C0A6CD67E62588825A9FEEC9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FEF4E74D9C160BFD2988F5BE /* Build configuration list for PBXNativeTarget "Rumis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0761CA6F5B8891F6F9E3E3A6 /* Debug */,
+				15C59600D4437E0917530DA0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		53B501C3931EDA17AF062955 /* XCLocalSwiftPackageReference "RumisCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = RumisCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		26E563E6DFC1709CBF1F015A /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		DC189AE0A069A562CA06AFA2 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		691266A89C83B8FE22697700 /* RumisCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RumisCore;
+		};
+		84A2EFD9AAFC655F84178E22 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DC189AE0A069A562CA06AFA2 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+		FD18F797A39DBAEAF73D2588 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 26E563E6DFC1709CBF1F015A /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 101F328B173EC84C28D4A65E /* Project object */;
+}

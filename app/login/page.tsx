@@ -16,9 +16,15 @@ export default function LoginPage() {
       <Suspense fallback={null}>
         <DemoLoginButton />
       </Suspense>
-      <Link href="/privacy" className="text-xs text-muted-foreground hover:underline">
-        Política de privacidad
-      </Link>
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <Link href="/privacy" className="hover:underline">
+          Política de privacidad
+        </Link>
+        <span aria-hidden>·</span>
+        <Link href="/terms" className="hover:underline">
+          Términos de servicio
+        </Link>
+      </div>
     </div>
   );
 }

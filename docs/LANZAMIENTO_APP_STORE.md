@@ -1,19 +1,26 @@
 # Lanzar Rumis en la App Store
 
-## Cómo funciona (y por qué los cambios llegan al instante)
+## Cómo funciona (app nativa, ya no es un contenedor web)
 
-La app de iOS es un contenedor nativo (Capacitor) que carga la web
-`https://piso-compartido.vercel.app`. Por eso:
+> **Actualizado**: la app dejó de ser un contenedor Capacitor que cargaba la
+> web. Ahora es una app SwiftUI nativa (proyecto en `ios-native/`) que habla
+> directo con Supabase — el código vive en este repo, pero ya no carga
+> `piso-compartido.vercel.app` dentro de un WebView. Esto era precisamente
+> para evitar el riesgo de rechazo por la guideline 4.2 (ver más abajo) y
+> para que vaya más fluida.
+>
+> **Consecuencia importante**: a diferencia de antes, **un cambio en la web
+> ya NO llega solo a los iPhones**. Cualquier cambio de pantallas, textos o
+> funciones dentro de la app requiere compilar de nuevo y volver a subir una
+> build a App Store Connect (pasos 3.6-3.9). Lo que sigue llegando al
+> instante sin pasar por Apple es el propio backend (Supabase: esquema,
+> RLS, funciones, Edge Function de push) y la web para navegador, que la
+> app nativa no usa salvo para exportar el Excel (una llamada puntual a esa
+> misma ruta).
 
-- **Cualquier cambio de la web** (pantallas, textos, funciones, arreglos) llega a
-  todos los iPhones en cuanto Vercel despliega (`git push` a `main`, ~2 min). No
-  hay que volver a pasar por Apple. La app recoge la versión nueva la próxima vez
-  que se abre o cuando vuelve de segundo plano tras más de 2 minutos.
-- **Solo hay que volver a subir a Apple** si se cambia algo nativo: icono, nombre,
-  `capacitor.config.ts`, plugins de Capacitor o código de `ios/`.
-
-Partes nativas incluidas: notificaciones push de iOS (APNs), exportar Excel con la
-hoja de compartir de iOS y una pantalla propia "Sin conexión".
+Partes nativas: notificaciones push (APNs), exportar Excel (descarga la hoja ya
+generada por la web y abre la hoja de compartir de iOS), Universal Links para que
+los enlaces de invitación abran la app, y pantalla propia "Sin conexión".
 
 ---
 
@@ -33,31 +40,75 @@ hoja de compartir de iOS y una pantalla propia "Sin conexión".
 
 - Un Mac con la **última versión de Xcode** (Mac App Store). Apple solo acepta
   apps compiladas con el SDK actual.
-- **Node.js 20 o superior** (https://nodejs.org) y git.
-- Su cuenta de **Apple Developer** ya activa (99 €/año).
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen) para generar el `.xcodeproj`
+  (no se versiona): `brew install xcodegen`.
+- Su cuenta de **Apple Developer** ya activa (99 €/año), que es la que paga y a
+  cuyo nombre queda la app (ver apartado 7).
 
-## 3. Pasos del amigo
+(Node.js ya no hace falta para la parte de iOS — eso era del contenedor
+Capacitor antiguo, que ha desaparecido. Solo importa si también se toca la web.)
+
+## 2bis. Daros acceso mutuo (para que Marco pueda compilar y subir él mismo)
+
+Compilar y probar en el **simulador** no necesita nada de esto — solo hace
+falta para compilar en un **iPhone físico** y para subir una build a App Store
+Connect (Archive → Upload, apartado 3.7). Dos formas de hacerlo:
+
+**Opción A — el amigo invita a Marco a su equipo (recomendado, deja a Marco
+hacer todo el trabajo técnico sin depender de que el amigo esté delante del
+Mac):**
+1. El amigo entra en https://appstoreconnect.apple.com → **Usuarios y acceso**
+   (o developer.apple.com → **Users and Access**, según dónde gestione el
+   equipo).
+2. **+** → invita el Apple ID de Marco.
+3. Rol: **App Manager** o **Admin** (no solo "Developer") si Marco también
+   tiene que crear la ficha de la app, gestionar TestFlight y enviarla a
+   revisión desde App Store Connect — no solo compilarla en Xcode.
+4. Marco acepta la invitación por correo, y en **Xcode → Settings → Accounts**
+   añade su propio Apple ID (el suyo, no el del amigo). El equipo del amigo
+   aparecerá disponible en el desplegable **Team** del apartado 3.2.
+5. A partir de aquí, Marco puede compilar en su iPhone, archivar y subir la
+   build él mismo — el nombre que aparece como vendedor en la App Store sigue
+   siendo el del amigo (apartado 7), eso no cambia con este paso.
+
+**Opción B — el amigo hace él mismo los pasos 3.1 a 3.9** en su propio Mac,
+tal como estaba pensado originalmente (menos cómodo si Marco es quien está
+haciendo los cambios de código).
+
+Con la Opción A, el bundle id y el Team ID en `ios-native/project.yml` no
+hace falta tocarlos — ya están puestos al equipo del amigo (`R4U5XJ6C89`,
+el mismo que ya usaba la app actual en TestFlight/App Store).
+
+## 3. Pasos del amigo (o de Marco, si se hizo la Opción A de arriba)
 
 ### 3.1 Descargar el proyecto
 ```bash
 git clone https://github.com/marcoobarroso/piso-compartido.git
-cd piso-compartido
-npm install
-npx cap sync ios
-open ios/App/App.xcodeproj
+cd piso-compartido/ios-native
+xcodegen generate
+open Rumis.xcodeproj
 ```
-`npm install` es obligatorio: Xcode saca los plugins nativos de `node_modules`.
+`xcodegen generate` hay que volver a ejecutarlo cada vez que se añaden o borran
+archivos `.swift` (el `.xcodeproj` se regenera desde `project.yml`, no se edita a
+mano ni se sube a git).
 
 ### 3.2 Firma en Xcode
-Target **App** → pestaña **Signing & Capabilities**:
+Target **Rumis** (no "App", ese era el nombre del target antiguo de Capacitor) →
+pestaña **Signing & Capabilities**:
 1. Marcar **Automatically manage signing**.
-2. **Team**: su cuenta de desarrollador.
+2. **Team**: su cuenta de desarrollador (sustituye al `DEVELOPMENT_TEAM` de
+   `ios-native/project.yml`, que trae puesto el de Marco — hay que cambiarlo ahí
+   y volver a ejecutar `xcodegen generate`, o Xcode lo pisará igualmente al
+   firmar automáticamente).
 3. **Bundle Identifier**: `com.marcobarroso.rumis`. Si Apple dice que no
    está disponible, poner otro (p. ej. `com.<suapellido>.rumis`) y
-   avisar a Marco: hay que cambiarlo también en `capacitor.config.ts` (`appId`) y
-   en el secreto `APNS_BUNDLE_ID` de Supabase.
-4. Debe aparecer la capability **Push Notifications** (ya viene configurada). Si no
-   aparece: botón **+ Capability** → Push Notifications.
+   avisar a Marco: hay que cambiarlo también en `PRODUCT_BUNDLE_IDENTIFIER` de
+   `ios-native/project.yml` y en el secreto `APNS_BUNDLE_ID` de Supabase.
+4. Debe aparecer la capability **Push Notifications** (ya viene en
+   `ios-native/App/App.entitlements`). Si no aparece: botón **+ Capability** →
+   Push Notifications.
+5. También trae **Associated Domains** (`applinks:piso-compartido.vercel.app`),
+   para que los enlaces de invitación abran la app — no hace falta tocarlo.
 
 ### 3.3 Clave de notificaciones (APNs)
 En https://developer.apple.com/account → **Certificates, IDs & Profiles** → **Keys** → **+**:
@@ -83,8 +134,12 @@ Edge Functions → **Secrets** → añadir:
 Conectar el iPhone al Mac, elegirlo arriba en Xcode y pulsar ▶. Comprobar:
 - [ ] Entrar con código de correo y con "Ver demo (sin registro)".
 - [ ] Añadir un gasto, una tarea y un artículo de la compra.
-- [ ] Aceptar "Activa avisos" → que otra cuenta del mismo piso añada un gasto →
-      llega la notificación, y al tocarla se abre la pantalla correcta.
+- [ ] Aceptar el permiso de notificaciones → que otra cuenta del mismo piso añada
+      un gasto o una tarea → llega la notificación, y al tocarla se abre la
+      pestaña correcta (Gastos/Tareas).
+- [ ] Tocar un enlace de invitación (`.../join/CÓDIGO`) desde Mensajes/Notas con la
+      app instalada → debe abrir la app directamente en vez de Safari
+      (Universal Links / Associated Domains).
 - [ ] Gastos → **Excel** → se abre la hoja de compartir → Guardar en Archivos.
 - [ ] Invitar por WhatsApp abre WhatsApp.
 - [ ] Modo avión → abrir la app → sale "Sin conexión" → quitar modo avión → Reintentar.

@@ -1,11 +1,47 @@
 import ExcelJS from "exceljs";
-import { requireHousehold, getHouseholdMembers, resolveNames } from "@/lib/household";
+import { createClient as createServerClient } from "@supabase/supabase-js";
+import { requireHousehold, getHouseholdMembers, resolveNames, type Household } from "@/lib/household";
 import {
   CATEGORY_HEX,
   CATEGORY_LABELS,
   EXPENSE_CATEGORIES,
   type ExpenseCategory,
 } from "@/lib/categories";
+
+/**
+ * The native iOS app authenticates directly against Supabase (no Next.js
+ * session cookie), so it calls this route with `Authorization: Bearer
+ * <access_token>` instead. Web requests are unaffected — they keep going
+ * through the cookie-based requireHousehold() below.
+ */
+async function resolveFromBearerToken(request: Request) {
+  const auth = request.headers.get("authorization");
+  if (!auth?.startsWith("Bearer ")) return null;
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { global: { headers: { Authorization: auth } } }
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data } = await supabase
+    .from("household_members")
+    .select("joined_at, households(id, name, invite_code)")
+    .eq("user_id", user.id)
+    .order("joined_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  const household = (data?.households as unknown as Household | null) ?? null;
+  if (!household) return null;
+
+  return { supabase, user, household };
+}
 
 const HEADER_FILL: ExcelJS.Fill = {
   type: "pattern",
@@ -22,8 +58,8 @@ function hexToArgb(hex: string): string {
   return "FF" + hex.replace("#", "").toUpperCase();
 }
 
-export async function GET() {
-  const { supabase, household } = await requireHousehold();
+export async function GET(request: Request) {
+  const { supabase, household } = (await resolveFromBearerToken(request)) ?? (await requireHousehold());
   const members = await getHouseholdMembers(supabase, household.id);
 
   const [{ data: expenses }, { data: shares }] = await Promise.all([
