@@ -1,12 +1,12 @@
 import Sentry
 
-/// Crash/error reporting, off by default so a fresh checkout doesn't spam a
-/// DSN nobody owns. To turn it on: create a project at sentry.io, paste its
-/// DSN below, rebuild — that's the only step left. Until then `start()` is a
-/// no-op (Sentry's own SDK behavior when given an empty DSN).
+/// Crash/error reporting. The DSN below is not secret — like the Supabase
+/// anon key in SupabaseClient.swift, Sentry DSNs are designed to ship
+/// inside client binaries (write-only: it lets the SDK submit events, not
+/// read project data). `start()` is a no-op if `dsn` is ever emptied out
+/// (e.g. for a throwaway fork nobody wants reporting to this project).
 enum SentryConfig {
-    /// TODO: paste the real DSN from sentry.io here to enable crash reporting.
-    static let dsn = ""
+    static let dsn = "https://42748a5f079443d1c2ab839f526d53b9@o4511943193329664.ingest.de.sentry.io/4512181614805072"
 
     static func start() {
         guard !dsn.isEmpty else { return }
