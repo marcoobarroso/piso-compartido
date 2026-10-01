@@ -210,6 +210,26 @@ struct ShoppingView: View {
                     }
 
                 Spacer(minLength: 0)
+
+                if editable {
+                    Button {
+                        startEditing(item)
+                    } label: {
+                        Image(systemName: "pencil")
+                            .foregroundStyle(RTheme.mutedForeground)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Editar")
+
+                    Button {
+                        Task { await deleteItem(item) }
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(RTheme.mutedForeground)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Quitar")
+                }
             }
             .contentShape(Rectangle())
             .listRowBackground(RTheme.card)
