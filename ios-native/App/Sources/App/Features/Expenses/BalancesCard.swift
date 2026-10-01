@@ -84,6 +84,7 @@ struct BalancesCard: View {
         if succeeded {
             settledTrigger += 1
             ReviewPrompt.registerPositiveAction()
+            AnalyticsConfig.track("debt_settled")
         }
     }
 }

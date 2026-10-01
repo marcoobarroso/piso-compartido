@@ -39,6 +39,7 @@ struct ProfileSetupView: View {
         }
         .background(RTheme.background)
         .scrollDismissesKeyboard(.interactively)
+        .task { AnalyticsConfig.screen("ProfileSetup") }
     }
 
     private func save() {
@@ -51,6 +52,7 @@ struct ProfileSetupView: View {
             do {
                 try await session.completeProfileSetup(name: cleanName)
                 isLoading = false
+                AnalyticsConfig.track("profile_completed")
             } catch {
                 isLoading = false
                 errorMessage = "No se ha podido guardar: \(error.localizedDescription)"

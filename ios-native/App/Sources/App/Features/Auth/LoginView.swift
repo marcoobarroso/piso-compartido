@@ -92,6 +92,7 @@ struct LoginView: View {
         }
         .background(RTheme.background)
         .scrollDismissesKeyboard(.interactively)
+        .task { AnalyticsConfig.screen("Login") }
     }
 
     private var stepDescription: String {
@@ -202,6 +203,7 @@ struct LoginView: View {
             do {
                 try await authRepo.verifyEmailCode(email: email, code: code)
                 isLoading = false
+                AnalyticsConfig.track("login_completed", ["method": "email_code"])
                 // AppSession's auth listener picks up the new session and
                 // flips `route` on its own; nothing else to do here.
             } catch {
@@ -219,6 +221,7 @@ struct LoginView: View {
             do {
                 try await authRepo.signInDemo(email: demoEmail, password: demoPassword)
                 isDemoLoading = false
+                AnalyticsConfig.track("login_completed", ["method": "demo"])
             } catch {
                 isDemoLoading = false
                 errorMessage = "No se ha podido entrar a la demo. Inténtalo de nuevo."

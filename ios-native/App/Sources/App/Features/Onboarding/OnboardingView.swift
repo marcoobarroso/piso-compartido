@@ -67,6 +67,7 @@ struct OnboardingView: View {
         }
         .background(RTheme.background)
         .scrollDismissesKeyboard(.interactively)
+        .task { AnalyticsConfig.screen("Onboarding") }
     }
 
     private func createHousehold() {
@@ -79,6 +80,7 @@ struct OnboardingView: View {
             do {
                 try await session.createHousehold(name: cleanName)
                 isCreating = false
+                AnalyticsConfig.track("household_created")
             } catch {
                 isCreating = false
                 errorMessage = error.localizedDescription
@@ -95,6 +97,7 @@ struct OnboardingView: View {
             do {
                 try await session.joinHousehold(code: inviteCode)
                 isJoining = false
+                AnalyticsConfig.track("household_joined")
             } catch {
                 isJoining = false
                 errorMessage = error.localizedDescription

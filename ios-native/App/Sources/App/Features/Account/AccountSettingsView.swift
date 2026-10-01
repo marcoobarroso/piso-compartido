@@ -313,6 +313,7 @@ struct AccountSettingsView: View {
         defer { signingOut = false }
         do {
             try await session.signOut()
+            AnalyticsConfig.track("signed_out")
         } catch {
             errorMessage = "No se ha podido cerrar sesión: \(error.localizedDescription)"
         }
@@ -347,6 +348,7 @@ struct AccountSettingsView: View {
         do {
             try await householdRepo.deleteAccount()
             session.noteAccountDeleted()
+            AnalyticsConfig.track("account_deleted")
             try await session.signOut()
         } catch {
             errorMessage = "No se ha podido borrar la cuenta: \(error.localizedDescription)"

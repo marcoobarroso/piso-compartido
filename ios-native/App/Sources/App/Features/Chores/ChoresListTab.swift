@@ -151,6 +151,7 @@ struct ChoresListTab: View {
             onCompleted(completed, next)
             completionCount += 1
             ReviewPrompt.registerPositiveAction()
+            AnalyticsConfig.track("chore_completed")
         } catch {
             errorMessage = "No se ha podido completar la tarea: \(error.localizedDescription)"
         }

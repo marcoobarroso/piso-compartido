@@ -8,6 +8,7 @@ struct RumisApp: App {
 
     init() {
         SentryConfig.start()
+        AnalyticsConfig.start()
     }
 
     var body: some Scene {

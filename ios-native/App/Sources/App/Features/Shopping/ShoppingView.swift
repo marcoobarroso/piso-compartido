@@ -326,6 +326,7 @@ struct ShoppingView: View {
             }
             newName = ""
             newQuantity = ""
+            AnalyticsConfig.track("shopping_item_added")
         } catch {
             errorMessage = "No se ha podido añadir el artículo: \(error.localizedDescription)"
         }

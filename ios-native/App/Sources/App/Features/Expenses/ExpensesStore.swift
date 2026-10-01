@@ -96,6 +96,7 @@ final class ExpensesStore {
                 resortExpenses()
                 self.shares.append(contentsOf: newShares)
             }
+            AnalyticsConfig.track("expense_added")
             return true
         } catch {
             errorMessage = "No se ha podido guardar el gasto: \(error.localizedDescription)"

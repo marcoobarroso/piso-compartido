@@ -6,6 +6,8 @@ import SwiftUI
 struct RootTabView: View {
     @State private var selection = 0
 
+    private static let tabNames = ["Inicio", "Gastos", "Tareas", "Compra", "Stats"]
+
     var body: some View {
         TabView(selection: $selection) {
             HouseholdHomeView()
@@ -39,6 +41,12 @@ struct RootTabView: View {
                 .tag(4)
         }
         .tint(RTheme.primary)
+        .task {
+            AnalyticsConfig.screen(Self.tabNames[selection])
+        }
+        .onChange(of: selection) { _, newValue in
+            AnalyticsConfig.screen(Self.tabNames[newValue])
+        }
         .onReceive(NotificationCenter.default.publisher(for: .rumisPushTapped)) { note in
             // `link` values come from the notification triggers in
             // supabase/migrations/0004_notifications.sql — keep in sync if
