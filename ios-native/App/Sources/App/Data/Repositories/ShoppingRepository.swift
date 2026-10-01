@@ -30,22 +30,33 @@ struct ShoppingRepository {
             .value
     }
 
-    func addItem(_ item: ShoppingItemInsert) async throws {
-        try await supabase.from("shopping_items").insert(item).execute()
+    func addItem(_ item: ShoppingItemInsert) async throws -> ShoppingItem {
+        try await supabase.from("shopping_items")
+            .insert(item)
+            .select()
+            .single()
+            .execute()
+            .value
     }
 
-    func setChecked(id: UUID, isChecked: Bool, userId: UUID) async throws {
+    func setChecked(id: UUID, isChecked: Bool, userId: UUID) async throws -> ShoppingItem {
         try await supabase.from("shopping_items")
             .update(ShoppingItemCheckedUpdate(isChecked: isChecked, checkedBy: isChecked ? userId : nil, checkedAt: isChecked ? Date() : nil))
             .eq("id", value: id)
+            .select()
+            .single()
             .execute()
+            .value
     }
 
-    func updateFields(id: UUID, name: String, quantity: String?) async throws {
+    func updateFields(id: UUID, name: String, quantity: String?) async throws -> ShoppingItem {
         try await supabase.from("shopping_items")
             .update(ShoppingItemFieldsUpdate(name: name, quantity: quantity))
             .eq("id", value: id)
+            .select()
+            .single()
             .execute()
+            .value
     }
 
     func deleteItem(id: UUID) async throws {
@@ -53,10 +64,11 @@ struct ShoppingRepository {
     }
 }
 
-/// Live-updates the shared/personal shopping list. Unlike the web app's
-/// manual per-event merge, this just refetches on any change — simpler and
-/// robust, at the cost of a slightly less "optimistic" feel; revisit if that
-/// proves too chatty in practice.
+/// Live-updates the shared/personal shopping list for changes made by OTHER
+/// members (ShoppingView applies its own mutations locally already). Unlike
+/// the web app's manual per-event merge, this just refetches everything on
+/// any change — simpler and robust, at the cost of a slightly less
+/// "optimistic" feel; revisit if that proves too chatty in practice.
 @MainActor
 final class ShoppingRealtimeSubscription {
     private var channel: RealtimeChannelV2?

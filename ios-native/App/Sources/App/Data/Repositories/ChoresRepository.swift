@@ -53,7 +53,7 @@ struct ChoresRepository {
             .value
     }
 
-    func addChore(_ chore: ChoreInsert, firstAssignee: UUID, firstDueDate: String) async throws -> Chore {
+    func addChore(_ chore: ChoreInsert, firstAssignee: UUID, firstDueDate: String) async throws -> (chore: Chore, assignment: ChoreAssignment) {
         let inserted: Chore = try await supabase.from("chores")
             .insert(chore)
             .select()
@@ -61,11 +61,14 @@ struct ChoresRepository {
             .execute()
             .value
 
-        try await supabase.from("chore_assignments").insert(
-            ChoreAssignmentInsert(choreId: inserted.id, householdId: chore.householdId, assignedTo: firstAssignee, dueDate: firstDueDate)
-        ).execute()
+        let assignment: ChoreAssignment = try await supabase.from("chore_assignments")
+            .insert(ChoreAssignmentInsert(choreId: inserted.id, householdId: chore.householdId, assignedTo: firstAssignee, dueDate: firstDueDate))
+            .select()
+            .single()
+            .execute()
+            .value
 
-        return inserted
+        return (inserted, assignment)
     }
 
     func updateChore(id: UUID, fields: ChoreFieldsUpdate) async throws {
@@ -78,14 +81,23 @@ struct ChoresRepository {
 
     /// Marks the current assignment done and creates the next one — caller
     /// computes `nextAssignedTo`/`nextDueDate` via RumisCore.ChoreRotation.
-    func completeChore(assignmentId: UUID, choreId: UUID, householdId: UUID, completedBy: UUID, nextAssignedTo: UUID, nextDueDate: String) async throws {
-        try await supabase.from("chore_assignments")
+    /// Returns both rows so the caller can update local state in place.
+    func completeChore(assignmentId: UUID, choreId: UUID, householdId: UUID, completedBy: UUID, nextAssignedTo: UUID, nextDueDate: String) async throws -> (completed: ChoreAssignment, next: ChoreAssignment) {
+        let completed: ChoreAssignment = try await supabase.from("chore_assignments")
             .update(ChoreAssignmentCompleteUpdate(status: "done", completedAt: Date(), completedBy: completedBy))
             .eq("id", value: assignmentId)
+            .select()
+            .single()
             .execute()
+            .value
 
-        try await supabase.from("chore_assignments").insert(
-            ChoreAssignmentInsert(choreId: choreId, householdId: householdId, assignedTo: nextAssignedTo, dueDate: nextDueDate)
-        ).execute()
+        let next: ChoreAssignment = try await supabase.from("chore_assignments")
+            .insert(ChoreAssignmentInsert(choreId: choreId, householdId: householdId, assignedTo: nextAssignedTo, dueDate: nextDueDate))
+            .select()
+            .single()
+            .execute()
+            .value
+
+        return (completed, next)
     }
 }

@@ -9,10 +9,11 @@ struct ChoresListTab: View {
     let memberNames: [UUID: String]
     let householdId: UUID
     let userId: UUID
-    let onCompleted: () async -> Void
+    let onCompleted: (_ completed: ChoreAssignment, _ next: ChoreAssignment) -> Void
 
     private let repo = ChoresRepository()
     @State private var completingId: UUID?
+    @State private var errorMessage: String?
 
     private var pending: [ChoreAssignment] {
         assignments
@@ -26,6 +27,12 @@ struct ChoresListTab: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            if let errorMessage {
+                Text(errorMessage)
+                    .font(.footnote)
+                    .foregroundStyle(RTheme.destructive)
+            }
+
             if pending.isEmpty {
                 emptyState
             } else {
@@ -130,9 +137,10 @@ struct ChoresListTab: View {
         let nextDateStr = formatter.string(from: nextDate)
 
         completingId = assignment.id
+        errorMessage = nil
         defer { completingId = nil }
         do {
-            try await repo.completeChore(
+            let (completed, next) = try await repo.completeChore(
                 assignmentId: assignment.id,
                 choreId: chore.id,
                 householdId: householdId,
@@ -140,10 +148,10 @@ struct ChoresListTab: View {
                 nextAssignedTo: nextUUID,
                 nextDueDate: nextDateStr
             )
-            await onCompleted()
+            onCompleted(completed, next)
             ReviewPrompt.registerPositiveAction()
         } catch {
-            // Best-effort: the list stays as-is and the user can retry.
+            errorMessage = "No se ha podido completar la tarea: \(error.localizedDescription)"
         }
     }
 }

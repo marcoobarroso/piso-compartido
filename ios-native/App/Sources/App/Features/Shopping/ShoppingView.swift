@@ -8,10 +8,8 @@ struct ShoppingView: View {
     @Environment(AppSession.self) private var session
 
     private let repository = ShoppingRepository()
-    private let householdRepository = HouseholdRepository()
 
     @State private var items: [ShoppingItem] = []
-    @State private var members: [HouseholdMember] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
     @State private var subscription = ShoppingRealtimeSubscription()
@@ -33,7 +31,7 @@ struct ShoppingView: View {
 
     private var memberNames: [UUID: String] {
         var dict: [UUID: String] = [:]
-        for member in members {
+        for member in session.members {
             dict[member.userId] = member.profiles?.displayName ?? "tu compi"
         }
         return dict
@@ -285,12 +283,9 @@ struct ShoppingView: View {
         isLoading = true
         errorMessage = nil
         do {
-            async let fetchedItems = repository.fetchItems(householdId: householdId)
-            async let fetchedMembers = householdRepository.fetchMembers(householdId: householdId)
-            items = try await fetchedItems
-            members = try await fetchedMembers
+            items = try await repository.fetchItems(householdId: householdId)
         } catch {
-            errorMessage = "No se ha podido cargar la lista de la compra."
+            errorMessage = "No se ha podido cargar la lista de la compra: \(error.localizedDescription)"
         }
         isLoading = false
     }
@@ -300,7 +295,7 @@ struct ShoppingView: View {
         do {
             items = try await repository.fetchItems(householdId: householdId)
         } catch {
-            errorMessage = "No se ha podido actualizar la lista."
+            errorMessage = "No se ha podido actualizar la lista: \(error.localizedDescription)"
         }
     }
 
@@ -311,7 +306,7 @@ struct ShoppingView: View {
         let trimmedQuantity = newQuantity.trimmingCharacters(in: .whitespacesAndNewlines)
 
         do {
-            try await repository.addItem(
+            let created = try await repository.addItem(
                 ShoppingItemInsert(
                     householdId: householdId,
                     name: trimmedName,
@@ -320,30 +315,36 @@ struct ShoppingView: View {
                     ownerUserId: isSharedScope ? nil : currentUserId
                 )
             )
+            withAnimation {
+                items.append(created)
+            }
             newName = ""
             newQuantity = ""
-            await refetchItems()
         } catch {
-            errorMessage = "No se ha podido añadir el artículo."
+            errorMessage = "No se ha podido añadir el artículo: \(error.localizedDescription)"
         }
     }
 
     private func toggleItem(_ item: ShoppingItem) async {
         guard let currentUserId else { return }
         do {
-            try await repository.setChecked(id: item.id, isChecked: !item.isChecked, userId: currentUserId)
-            await refetchItems()
+            let updated = try await repository.setChecked(id: item.id, isChecked: !item.isChecked, userId: currentUserId)
+            if let index = items.firstIndex(where: { $0.id == item.id }) {
+                items[index] = updated
+            }
         } catch {
-            errorMessage = "No se ha podido actualizar el artículo."
+            errorMessage = "No se ha podido actualizar el artículo: \(error.localizedDescription)"
         }
     }
 
     private func deleteItem(_ item: ShoppingItem) async {
         do {
             try await repository.deleteItem(id: item.id)
-            await refetchItems()
+            withAnimation {
+                items.removeAll { $0.id == item.id }
+            }
         } catch {
-            errorMessage = "No se ha podido quitar el artículo."
+            errorMessage = "No se ha podido quitar el artículo: \(error.localizedDescription)"
         }
     }
 
@@ -363,11 +364,13 @@ struct ShoppingView: View {
         let trimmedQuantity = editQuantity.trimmingCharacters(in: .whitespacesAndNewlines)
 
         do {
-            try await repository.updateFields(id: id, name: trimmedName, quantity: trimmedQuantity.isEmpty ? nil : trimmedQuantity)
+            let updated = try await repository.updateFields(id: id, name: trimmedName, quantity: trimmedQuantity.isEmpty ? nil : trimmedQuantity)
+            if let index = items.firstIndex(where: { $0.id == id }) {
+                items[index] = updated
+            }
             editingId = nil
-            await refetchItems()
         } catch {
-            errorMessage = "No se ha podido guardar el cambio."
+            errorMessage = "No se ha podido guardar el cambio: \(error.localizedDescription)"
         }
     }
 }

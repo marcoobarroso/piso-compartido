@@ -13,7 +13,6 @@ struct StatsView: View {
 
     @State private var expenses: [Expense] = []
     @State private var assignments: [ChoreAssignment] = []
-    @State private var members: [HouseholdMember] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
 
@@ -84,20 +83,27 @@ struct StatsView: View {
         .background(RTheme.background.ignoresSafeArea())
         .navigationTitle("Estadísticas")
         .task {
-            guard isLoading, let householdId = session.household?.id else { return }
-            do {
-                async let expensesTask = ExpensesRepository().fetchExpenses(householdId: householdId)
-                async let assignmentsTask = ChoresRepository().fetchAssignments(householdId: householdId)
-                async let membersTask = HouseholdRepository().fetchMembers(householdId: householdId)
-                let (fetchedExpenses, fetchedAssignments, fetchedMembers) = try await (expensesTask, assignmentsTask, membersTask)
-                expenses = fetchedExpenses
-                assignments = fetchedAssignments
-                members = fetchedMembers
-            } catch {
-                errorMessage = "No se pudieron cargar las estadísticas."
-            }
-            isLoading = false
+            guard isLoading else { return }
+            await loadAll()
         }
+        .refreshable {
+            await loadAll()
+        }
+    }
+
+    private func loadAll() async {
+        guard let householdId = session.household?.id else { return }
+        do {
+            async let expensesTask = ExpensesRepository().fetchExpenses(householdId: householdId)
+            async let assignmentsTask = ChoresRepository().fetchAssignments(householdId: householdId)
+            let (fetchedExpenses, fetchedAssignments) = try await (expensesTask, assignmentsTask)
+            expenses = fetchedExpenses
+            assignments = fetchedAssignments
+            errorMessage = nil
+        } catch {
+            errorMessage = "No se pudieron cargar las estadísticas: \(error.localizedDescription)"
+        }
+        isLoading = false
     }
 
     // MARK: - Charts
@@ -303,7 +309,7 @@ struct StatsView: View {
     }
 
     private func memberName(for userId: UUID) -> String {
-        guard let member = members.first(where: { $0.userId == userId }) else { return "Alguien" }
+        guard let member = session.members.first(where: { $0.userId == userId }) else { return "Alguien" }
         return member.profiles?.displayName ?? "Sin nombre"
     }
 }

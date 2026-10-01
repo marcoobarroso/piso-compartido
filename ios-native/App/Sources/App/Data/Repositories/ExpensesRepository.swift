@@ -82,7 +82,9 @@ struct ExpensesRepository {
             .value
     }
 
-    func addExpense(_ expense: ExpenseInsert, shares: [ExpenseShareInput]) async throws -> Expense {
+    /// Returns the inserted expense *and* its shares so callers can splice
+    /// both into local state instead of re-fetching the whole household.
+    func addExpense(_ expense: ExpenseInsert, shares: [ExpenseShareInput]) async throws -> (expense: Expense, shares: [ExpenseShare]) {
         let inserted: Expense = try await supabase.from("expenses")
             .insert(expense)
             .select()
@@ -94,31 +96,51 @@ struct ExpensesRepository {
             let shareInserts = shares.map {
                 ExpenseShareInsert(householdId: expense.householdId, expenseId: inserted.id, userId: UUID(uuidString: $0.userId)!, shareCents: $0.shareCents)
             }
-            try await supabase.from("expense_shares").insert(shareInserts).execute()
+            let insertedShares: [ExpenseShare] = try await supabase.from("expense_shares")
+                .insert(shareInserts)
+                .select()
+                .execute()
+                .value
+            return (inserted, insertedShares)
         } catch {
             try? await supabase.from("expenses").delete().eq("id", value: inserted.id).execute()
             throw error
         }
-
-        return inserted
     }
 
-    func updateExpense(id: UUID, fields: ExpenseFieldsUpdate, householdId: UUID, shares: [ExpenseShareInput]) async throws {
-        try await supabase.from("expenses").update(fields).eq("id", value: id).execute()
+    /// Returns the updated expense and its new shares (see `addExpense`).
+    func updateExpense(id: UUID, fields: ExpenseFieldsUpdate, householdId: UUID, shares: [ExpenseShareInput]) async throws -> (expense: Expense, shares: [ExpenseShare]) {
+        let updated: Expense = try await supabase.from("expenses")
+            .update(fields)
+            .eq("id", value: id)
+            .select()
+            .single()
+            .execute()
+            .value
 
         try await supabase.from("expense_shares").delete().eq("expense_id", value: id).execute()
         let shareInserts = shares.map {
             ExpenseShareInsert(householdId: householdId, expenseId: id, userId: UUID(uuidString: $0.userId)!, shareCents: $0.shareCents)
         }
-        try await supabase.from("expense_shares").insert(shareInserts).execute()
+        let insertedShares: [ExpenseShare] = try await supabase.from("expense_shares")
+            .insert(shareInserts)
+            .select()
+            .execute()
+            .value
+        return (updated, insertedShares)
     }
 
     func deleteExpense(id: UUID) async throws {
         try await supabase.from("expenses").delete().eq("id", value: id).execute()
     }
 
-    func recordSettlement(_ settlement: SettlementInsert) async throws {
-        try await supabase.from("settlements").insert(settlement).execute()
+    func recordSettlement(_ settlement: SettlementInsert) async throws -> Settlement {
+        try await supabase.from("settlements")
+            .insert(settlement)
+            .select()
+            .single()
+            .execute()
+            .value
     }
 
     func deleteSettlement(id: UUID) async throws {
@@ -134,15 +156,23 @@ struct ExpensesRepository {
             .value
     }
 
-    func addRecurringExpense(_ insert: RecurringExpenseInsert) async throws {
-        try await supabase.from("recurring_expenses").insert(insert).execute()
+    func addRecurringExpense(_ insert: RecurringExpenseInsert) async throws -> RecurringExpense {
+        try await supabase.from("recurring_expenses")
+            .insert(insert)
+            .select()
+            .single()
+            .execute()
+            .value
     }
 
-    func toggleRecurringExpense(id: UUID, active: Bool) async throws {
+    func toggleRecurringExpense(id: UUID, active: Bool) async throws -> RecurringExpense {
         try await supabase.from("recurring_expenses")
             .update(ActiveUpdate(active: active))
             .eq("id", value: id)
+            .select()
+            .single()
             .execute()
+            .value
     }
 
     func deleteRecurringExpense(id: UUID) async throws {

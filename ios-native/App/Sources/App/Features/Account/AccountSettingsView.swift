@@ -15,9 +15,6 @@ struct AccountSettingsView: View {
     @State private var householdNameDraft = ""
     @State private var savingName = false
 
-    @State private var members: [HouseholdMember] = []
-    @State private var loadingMembers = false
-
     @State private var errorMessage: String?
 
     @State private var showRegenerateConfirm = false
@@ -116,7 +113,6 @@ struct AccountSettingsView: View {
             }
             .task {
                 householdNameDraft = session.household?.name ?? ""
-                await loadMembers()
             }
         }
     }
@@ -213,25 +209,21 @@ struct AccountSettingsView: View {
     private var membersCard: some View {
         RCard(title: "Compañeros de piso", systemImage: "person.2.fill") {
             VStack(alignment: .leading, spacing: 12) {
-                if loadingMembers && members.isEmpty {
-                    ProgressView().tint(RTheme.primary)
-                } else {
-                    ForEach(members) { member in
-                        HStack(spacing: 10) {
-                            Text(member.profiles?.displayName ?? "Sin nombre")
-                                .font(.subheadline)
-                                .foregroundStyle(RTheme.cardForeground)
-                            if member.isAdmin {
-                                RBadge(text: "Admin", tint: RTheme.accentForeground, background: RTheme.accent)
+                ForEach(session.members) { member in
+                    HStack(spacing: 10) {
+                        Text(member.profiles?.displayName ?? "Sin nombre")
+                            .font(.subheadline)
+                            .foregroundStyle(RTheme.cardForeground)
+                        if member.isAdmin {
+                            RBadge(text: "Admin", tint: RTheme.accentForeground, background: RTheme.accent)
+                        }
+                        Spacer()
+                        if isAdmin && member.userId != session.userId {
+                            Button("Quitar", role: .destructive) {
+                                memberToRemove = member
                             }
-                            Spacer()
-                            if isAdmin && member.userId != session.userId {
-                                Button("Quitar", role: .destructive) {
-                                    memberToRemove = member
-                                }
-                                .font(.caption)
-                                .disabled(removingMember)
-                            }
+                            .font(.caption)
+                            .disabled(removingMember)
                         }
                     }
                 }
@@ -254,17 +246,6 @@ struct AccountSettingsView: View {
         }
     }
 
-    private func loadMembers() async {
-        guard let household = session.household else { return }
-        loadingMembers = true
-        defer { loadingMembers = false }
-        do {
-            members = try await householdRepo.fetchMembers(householdId: household.id)
-        } catch {
-            errorMessage = "No se han podido cargar los compañeros: \(error.localizedDescription)"
-        }
-    }
-
     private func removeMember(_ member: HouseholdMember) async {
         guard let household = session.household else { return }
         removingMember = true
@@ -275,7 +256,7 @@ struct AccountSettingsView: View {
         }
         do {
             try await householdRepo.removeMember(householdId: household.id, userId: member.userId)
-            await loadMembers()
+            await session.refreshMembers()
         } catch {
             errorMessage = "No se ha podido echar a esa persona: \(error.localizedDescription)"
         }

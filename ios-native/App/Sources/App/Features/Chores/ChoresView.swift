@@ -8,11 +8,9 @@ struct ChoresView: View {
     @Environment(AppSession.self) private var session
 
     private let choresRepo = ChoresRepository()
-    private let householdRepo = HouseholdRepository()
 
     @State private var chores: [Chore] = []
     @State private var assignments: [ChoreAssignment] = []
-    @State private var members: [HouseholdMember] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
 
@@ -37,7 +35,7 @@ struct ChoresView: View {
     }
 
     private var memberNames: [UUID: String] {
-        Dictionary(uniqueKeysWithValues: members.map { ($0.userId, $0.profiles?.displayName ?? "Sin nombre") })
+        Dictionary(uniqueKeysWithValues: session.members.map { ($0.userId, $0.profiles?.displayName ?? "Sin nombre") })
     }
 
     var body: some View {
@@ -91,7 +89,7 @@ struct ChoresView: View {
         .scrollDismissesKeyboard(.interactively)
         .task { await loadAll() }
         .sheet(item: $choreToEdit) { chore in
-            EditChoreSheet(chore: chore, members: members) {
+            EditChoreSheet(chore: chore, members: session.members) {
                 await loadAll()
             }
         }
@@ -124,7 +122,12 @@ struct ChoresView: View {
                 memberNames: memberNames,
                 householdId: householdId,
                 userId: userId,
-                onCompleted: { await loadAll() }
+                onCompleted: { completed, next in
+                    if let index = assignments.firstIndex(where: { $0.id == completed.id }) {
+                        assignments[index] = completed
+                    }
+                    assignments.append(next)
+                }
             )
         case .calendar:
             ChoresCalendarTab(chores: chores, assignments: assignments, memberNames: memberNames)
@@ -141,7 +144,7 @@ struct ChoresView: View {
                     description: $newDescription,
                     recurrenceDays: $newRecurrenceDays,
                     rotationOrder: $newRotationOrder,
-                    members: members
+                    members: session.members
                 )
 
                 if let formError {
@@ -225,12 +228,10 @@ struct ChoresView: View {
         do {
             async let choresResult = choresRepo.fetchChores(householdId: householdId)
             async let assignmentsResult = choresRepo.fetchAssignments(householdId: householdId)
-            async let membersResult = householdRepo.fetchMembers(householdId: householdId)
             chores = try await choresResult
             assignments = try await assignmentsResult
-            members = try await membersResult
         } catch {
-            errorMessage = "No se han podido cargar las tareas."
+            errorMessage = "No se han podido cargar las tareas: \(error.localizedDescription)"
         }
         isLoading = false
     }
@@ -273,12 +274,13 @@ struct ChoresView: View {
         )
 
         do {
-            _ = try await choresRepo.addChore(insert, firstAssignee: firstAssignee, firstDueDate: dueDateStr)
+            let (created, assignment) = try await choresRepo.addChore(insert, firstAssignee: firstAssignee, firstDueDate: dueDateStr)
+            chores.append(created)
+            assignments.append(assignment)
             newName = ""
             newDescription = ""
             newRecurrenceDays = 7
             newRotationOrder = []
-            await loadAll()
         } catch {
             formError = "No se ha podido crear la tarea: \(error.localizedDescription)"
         }
@@ -287,9 +289,10 @@ struct ChoresView: View {
     private func delete(_ chore: Chore) async {
         do {
             try await choresRepo.deleteChore(id: chore.id)
-            await loadAll()
+            chores.removeAll { $0.id == chore.id }
+            assignments.removeAll { $0.choreId == chore.id }
         } catch {
-            errorMessage = "No se ha podido borrar la tarea."
+            errorMessage = "No se ha podido borrar la tarea: \(error.localizedDescription)"
         }
         choreToDelete = nil
     }

@@ -24,6 +24,10 @@ final class AppSession {
     private(set) var profile: Profile?
     private(set) var household: Household?
     private(set) var membership: HouseholdMember?
+    /// Fetched once per `resolve()` and shared by every tab, instead of each
+    /// of Inicio/Gastos/Tareas/Compra/Stats independently re-fetching the
+    /// same `household_members` rows on first visit.
+    private(set) var members: [HouseholdMember] = []
     /// Set when the very first `resolve()` fails (e.g. no connection on cold
     /// launch) — without this, `route` stays `.loading` forever with no way
     /// out, since there's no previous good state to fall back to.
@@ -72,6 +76,7 @@ final class AppSession {
         profile = nil
         household = nil
         membership = nil
+        members = []
         route = .loggedOut
     }
 
@@ -79,7 +84,11 @@ final class AppSession {
         self.userId = userId
         self.userEmail = email
         do {
-            let profile = try await profileRepo.fetchProfile(id: userId)
+            // fetchProfile and fetchMyMembership don't depend on each other —
+            // run them concurrently instead of one after the other.
+            async let profileTask = profileRepo.fetchProfile(id: userId)
+            async let membershipTask = householdRepo.fetchMyMembership(userId: userId)
+            let (profile, membership) = try await (profileTask, membershipTask)
             self.profile = profile
             loadError = nil
 
@@ -88,7 +97,7 @@ final class AppSession {
                 return
             }
 
-            guard let membership = try await householdRepo.fetchMyMembership(userId: userId) else {
+            guard let membership else {
                 if let code = pendingInviteCode {
                     pendingInviteCode = nil
                     do {
@@ -103,7 +112,11 @@ final class AppSession {
                 return
             }
             self.membership = membership
-            self.household = try await householdRepo.fetchHousehold(id: membership.householdId)
+            async let householdTask = householdRepo.fetchHousehold(id: membership.householdId)
+            async let membersTask = householdRepo.fetchMembers(householdId: membership.householdId)
+            let (household, members) = try await (householdTask, membersTask)
+            self.household = household
+            self.members = members
             route = .inHousehold
         } catch {
             if route == .loading {
@@ -144,6 +157,16 @@ final class AppSession {
     func joinHousehold(code: String) async throws {
         _ = try await householdRepo.joinHousehold(inviteCode: code)
         await refresh()
+    }
+
+    /// Re-fetches just the members list — for the handful of actions that
+    /// change it (removing a member, someone new joining) without needing a
+    /// full `refresh()` of profile/household too.
+    func refreshMembers() async {
+        guard let household else { return }
+        if let fetched = try? await householdRepo.fetchMembers(householdId: household.id) {
+            members = fetched
+        }
     }
 
     func leaveHousehold() async throws {

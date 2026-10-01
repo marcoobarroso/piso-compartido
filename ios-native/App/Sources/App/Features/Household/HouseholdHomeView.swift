@@ -9,7 +9,6 @@ import RumisCore
 struct HouseholdHomeView: View {
     @Environment(AppSession.self) private var session
 
-    @State private var members: [HouseholdMember] = []
     @State private var balanceCents: Int = 0
     @State private var nextChoreAssignment: ChoreAssignment?
     @State private var pendingShoppingCount: Int = 0
@@ -18,7 +17,6 @@ struct HouseholdHomeView: View {
     @State private var showSettings = false
     @State private var copied = false
 
-    private let householdRepo = HouseholdRepository()
     private let expensesRepo = ExpensesRepository()
     private let choresRepo = ChoresRepository()
     private let shoppingRepo = ShoppingRepository()
@@ -100,12 +98,12 @@ struct HouseholdHomeView: View {
 
                     RCard(title: "Compañeros de piso", systemImage: "person.2.fill") {
                         VStack(alignment: .leading, spacing: 12) {
-                            if members.isEmpty && !isLoading {
+                            if session.members.isEmpty && !isLoading {
                                 Text("Todavía no hay compañeros.")
                                     .font(.subheadline)
                                     .foregroundStyle(RTheme.mutedForeground)
                             }
-                            ForEach(members) { member in
+                            ForEach(session.members) { member in
                                 HStack(spacing: 10) {
                                     Text(member.profiles?.displayName ?? "Sin nombre")
                                         .font(.subheadline)
@@ -165,18 +163,15 @@ struct HouseholdHomeView: View {
         errorMessage = nil
         guard let householdId = session.household?.id, let userId = session.userId else { return }
         do {
-            async let membersTask = householdRepo.fetchMembers(householdId: householdId)
             async let expensesTask = expensesRepo.fetchExpenses(householdId: householdId)
             async let sharesTask = expensesRepo.fetchShares(householdId: householdId)
             async let settlementsTask = expensesRepo.fetchSettlements(householdId: householdId)
             async let assignmentsTask = choresRepo.fetchAssignments(householdId: householdId)
             async let shoppingTask = shoppingRepo.fetchItems(householdId: householdId)
 
-            let (fetchedMembers, expenses, shares, settlements, assignments, shoppingItems) = try await (
-                membersTask, expensesTask, sharesTask, settlementsTask, assignmentsTask, shoppingTask
+            let (expenses, shares, settlements, assignments, shoppingItems) = try await (
+                expensesTask, sharesTask, settlementsTask, assignmentsTask, shoppingTask
             )
-
-            members = fetchedMembers
 
             let balances = DebtSimplify.computeBalances(
                 expenses: expenses.map { ExpenseInput(paidBy: $0.paidBy.uuidString, amountCents: $0.amountCents) },
@@ -203,7 +198,7 @@ struct HouseholdHomeView: View {
             isLoading = false
         } catch {
             isLoading = false
-            errorMessage = "No se ha podido cargar el piso. Tira hacia abajo para reintentar."
+            errorMessage = "No se ha podido cargar el piso: \(error.localizedDescription)"
         }
     }
 }

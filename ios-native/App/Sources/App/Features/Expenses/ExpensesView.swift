@@ -55,6 +55,7 @@ struct ExpensesView: View {
         }
         .background(RTheme.background)
         .task {
+            store.setMembers(session.members)
             await store.loadAll(householdId: householdId)
         }
         .refreshable {

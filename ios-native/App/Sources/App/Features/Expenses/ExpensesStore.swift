@@ -2,16 +2,16 @@ import Foundation
 import RumisCore
 
 /// Central data + mutation hub for the Expenses tab. Fetches expenses,
-/// shares, settlements, recurring expenses and household members together,
-/// and exposes derived balances/settle-up suggestions via
-/// RumisCore.DebtSimplify. Every mutation refetches everything afterwards
-/// (mirrors `revalidatePath` on the web) since the datasets here are small
-/// per household and correctness matters more than shaving a round trip.
+/// shares, settlements and recurring expenses; household members come from
+/// `AppSession.members` (set via `setMembers`) instead of being fetched
+/// here too, since every tab needs the same list. Each mutation splices its
+/// own result into local state instead of re-fetching everything — the one
+/// exception is `generateRecurringNow`, whose server-side date logic can
+/// create/skip an arbitrary number of rows, so that one still reloads.
 @MainActor
 @Observable
 final class ExpensesStore {
     private let repo = ExpensesRepository()
-    private let householdRepo = HouseholdRepository()
 
     private(set) var members: [HouseholdMember] = []
     private(set) var expenses: [Expense] = []
@@ -26,6 +26,10 @@ final class ExpensesStore {
     /// ExpensesStore()` construct this MainActor-isolated type from a
     /// (formally) non-isolated View initializer context.
     nonisolated init() {}
+
+    func setMembers(_ members: [HouseholdMember]) {
+        self.members = members
+    }
 
     var nameByUserId: [UUID: String] {
         Dictionary(uniqueKeysWithValues: members.map { ($0.userId, $0.profiles?.displayName ?? "Sin nombre") })
@@ -57,28 +61,35 @@ final class ExpensesStore {
         isLoading = true
         errorMessage = nil
         do {
-            async let membersTask = householdRepo.fetchMembers(householdId: householdId)
             async let expensesTask = repo.fetchExpenses(householdId: householdId)
             async let sharesTask = repo.fetchShares(householdId: householdId)
             async let settlementsTask = repo.fetchSettlements(householdId: householdId)
             async let recurringTask = repo.fetchRecurringExpenses(householdId: householdId)
-            let (m, e, s, st, r) = try await (membersTask, expensesTask, sharesTask, settlementsTask, recurringTask)
-            members = m
+            let (e, s, st, r) = try await (expensesTask, sharesTask, settlementsTask, recurringTask)
             expenses = e
             shares = s
             settlements = st
             recurring = r
         } catch {
-            errorMessage = "No se han podido cargar los gastos. Comprueba tu conexión e inténtalo de nuevo."
+            errorMessage = "No se han podido cargar los gastos: \(error.localizedDescription)"
         }
         isLoading = false
+    }
+
+    /// Expenses are shown newest-first by `expenseDate` ("YYYY-MM-DD", so a
+    /// plain string compare sorts chronologically) — re-sort after any
+    /// insert/update since the edited date may have moved.
+    private func resortExpenses() {
+        expenses.sort { $0.expenseDate > $1.expenseDate }
     }
 
     @discardableResult
     func addExpense(_ insert: ExpenseInsert, shares: [ExpenseShareInput], householdId: UUID) async -> Bool {
         do {
-            _ = try await repo.addExpense(insert, shares: shares)
-            await loadAll(householdId: householdId)
+            let (expense, newShares) = try await repo.addExpense(insert, shares: shares)
+            expenses.append(expense)
+            resortExpenses()
+            self.shares.append(contentsOf: newShares)
             return true
         } catch {
             errorMessage = "No se ha podido guardar el gasto: \(error.localizedDescription)"
@@ -89,8 +100,13 @@ final class ExpensesStore {
     @discardableResult
     func updateExpense(id: UUID, fields: ExpenseFieldsUpdate, shares: [ExpenseShareInput], householdId: UUID) async -> Bool {
         do {
-            try await repo.updateExpense(id: id, fields: fields, householdId: householdId, shares: shares)
-            await loadAll(householdId: householdId)
+            let (expense, newShares) = try await repo.updateExpense(id: id, fields: fields, householdId: householdId, shares: shares)
+            if let index = expenses.firstIndex(where: { $0.id == id }) {
+                expenses[index] = expense
+            }
+            resortExpenses()
+            self.shares.removeAll { $0.expenseId == id }
+            self.shares.append(contentsOf: newShares)
             return true
         } catch {
             errorMessage = "No se ha podido actualizar el gasto: \(error.localizedDescription)"
@@ -102,7 +118,8 @@ final class ExpensesStore {
     func deleteExpense(id: UUID, householdId: UUID) async -> Bool {
         do {
             try await repo.deleteExpense(id: id)
-            await loadAll(householdId: householdId)
+            expenses.removeAll { $0.id == id }
+            shares.removeAll { $0.expenseId == id }
             return true
         } catch {
             errorMessage = "No se ha podido borrar el gasto: \(error.localizedDescription)"
@@ -114,8 +131,8 @@ final class ExpensesStore {
     func recordSettlement(fromUserId: UUID, toUserId: UUID, amountCents: Int, householdId: UUID) async -> Bool {
         do {
             let insert = SettlementInsert(householdId: householdId, fromUserId: fromUserId, toUserId: toUserId, amountCents: amountCents)
-            try await repo.recordSettlement(insert)
-            await loadAll(householdId: householdId)
+            let settlement = try await repo.recordSettlement(insert)
+            settlements.insert(settlement, at: 0)
             return true
         } catch {
             errorMessage = "No se ha podido registrar el pago: \(error.localizedDescription)"
@@ -127,7 +144,7 @@ final class ExpensesStore {
     func deleteSettlement(id: UUID, householdId: UUID) async -> Bool {
         do {
             try await repo.deleteSettlement(id: id)
-            await loadAll(householdId: householdId)
+            settlements.removeAll { $0.id == id }
             return true
         } catch {
             errorMessage = "No se ha podido deshacer el pago: \(error.localizedDescription)"
@@ -138,8 +155,8 @@ final class ExpensesStore {
     @discardableResult
     func addRecurringExpense(_ insert: RecurringExpenseInsert, householdId: UUID) async -> Bool {
         do {
-            try await repo.addRecurringExpense(insert)
-            await loadAll(householdId: householdId)
+            let created = try await repo.addRecurringExpense(insert)
+            recurring.insert(created, at: 0)
             return true
         } catch {
             errorMessage = "No se ha podido crear el gasto fijo: \(error.localizedDescription)"
@@ -150,8 +167,10 @@ final class ExpensesStore {
     @discardableResult
     func toggleRecurringExpense(id: UUID, active: Bool, householdId: UUID) async -> Bool {
         do {
-            try await repo.toggleRecurringExpense(id: id, active: active)
-            await loadAll(householdId: householdId)
+            let updated = try await repo.toggleRecurringExpense(id: id, active: active)
+            if let index = recurring.firstIndex(where: { $0.id == id }) {
+                recurring[index] = updated
+            }
             return true
         } catch {
             errorMessage = "No se ha podido actualizar el gasto fijo: \(error.localizedDescription)"
@@ -163,7 +182,7 @@ final class ExpensesStore {
     func deleteRecurringExpense(id: UUID, householdId: UUID) async -> Bool {
         do {
             try await repo.deleteRecurringExpense(id: id)
-            await loadAll(householdId: householdId)
+            recurring.removeAll { $0.id == id }
             return true
         } catch {
             errorMessage = "No se ha podido borrar el gasto fijo: \(error.localizedDescription)"
