@@ -14,6 +14,7 @@ struct ChoresListTab: View {
     private let repo = ChoresRepository()
     @State private var completingId: UUID?
     @State private var errorMessage: String?
+    @State private var completionCount = 0
 
     private var pending: [ChoreAssignment] {
         assignments
@@ -46,6 +47,7 @@ struct ChoresListTab: View {
                 }
             }
         }
+        .sensoryFeedback(.success, trigger: completionCount)
     }
 
     private var emptyState: some View {
@@ -149,6 +151,7 @@ struct ChoresListTab: View {
                 nextDueDate: nextDateStr
             )
             onCompleted(completed, next)
+            completionCount += 1
             ReviewPrompt.registerPositiveAction()
         } catch {
             errorMessage = "No se ha podido completar la tarea: \(error.localizedDescription)"

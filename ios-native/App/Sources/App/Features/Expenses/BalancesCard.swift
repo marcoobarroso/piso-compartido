@@ -11,6 +11,7 @@ struct BalancesCard: View {
     let householdId: UUID
 
     @State private var settlingIndex: Int?
+    @State private var settledTrigger = 0
 
     var body: some View {
         RCard(title: "Saldos y pagos pendientes", systemImage: "arrow.left.arrow.right") {
@@ -60,6 +61,7 @@ struct BalancesCard: View {
                 }
             }
         }
+        .sensoryFeedback(.success, trigger: settledTrigger)
     }
 
     private func balanceLabel(_ amountCents: Int) -> String {
@@ -80,6 +82,7 @@ struct BalancesCard: View {
         let succeeded = await store.recordSettlement(fromUserId: fromId, toUserId: toId, amountCents: amountCents, householdId: householdId)
         settlingIndex = nil
         if succeeded {
+            settledTrigger += 1
             ReviewPrompt.registerPositiveAction()
         }
     }

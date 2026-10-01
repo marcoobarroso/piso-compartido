@@ -26,6 +26,7 @@ struct ChoresView: View {
 
     @State private var choreToEdit: Chore?
     @State private var choreToDelete: Chore?
+    @State private var deleteTrigger = 0
 
     private enum ChoresTab: String, CaseIterable, Identifiable, Hashable {
         case list = "Lista"
@@ -88,6 +89,8 @@ struct ChoresView: View {
         .background(RTheme.background)
         .scrollDismissesKeyboard(.interactively)
         .task { await loadAll() }
+        .refreshable { await loadAll() }
+        .sensoryFeedback(.impact(weight: .light), trigger: deleteTrigger)
         .sheet(item: $choreToEdit) { chore in
             EditChoreSheet(chore: chore, members: session.members) {
                 await loadAll()
@@ -123,10 +126,12 @@ struct ChoresView: View {
                 householdId: householdId,
                 userId: userId,
                 onCompleted: { completed, next in
-                    if let index = assignments.firstIndex(where: { $0.id == completed.id }) {
-                        assignments[index] = completed
+                    withAnimation {
+                        if let index = assignments.firstIndex(where: { $0.id == completed.id }) {
+                            assignments[index] = completed
+                        }
+                        assignments.append(next)
                     }
-                    assignments.append(next)
                 }
             )
         case .calendar:
@@ -275,8 +280,10 @@ struct ChoresView: View {
 
         do {
             let (created, assignment) = try await choresRepo.addChore(insert, firstAssignee: firstAssignee, firstDueDate: dueDateStr)
-            chores.append(created)
-            assignments.append(assignment)
+            withAnimation {
+                chores.append(created)
+                assignments.append(assignment)
+            }
             newName = ""
             newDescription = ""
             newRecurrenceDays = 7
@@ -289,8 +296,11 @@ struct ChoresView: View {
     private func delete(_ chore: Chore) async {
         do {
             try await choresRepo.deleteChore(id: chore.id)
-            chores.removeAll { $0.id == chore.id }
-            assignments.removeAll { $0.choreId == chore.id }
+            withAnimation {
+                chores.removeAll { $0.id == chore.id }
+                assignments.removeAll { $0.choreId == chore.id }
+            }
+            deleteTrigger += 1
         } catch {
             errorMessage = "No se ha podido borrar la tarea: \(error.localizedDescription)"
         }

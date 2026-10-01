@@ -22,6 +22,9 @@ struct ShoppingView: View {
     @State private var editName = ""
     @State private var editQuantity = ""
 
+    @State private var toggleTrigger = 0
+    @State private var deleteTrigger = 0
+
     // Optional, not force-unwrapped: `session.userId`/`.household` can go
     // briefly nil while signing out, and this view's body reads these
     // transitively (via mineItems/othersItems) — a force-unwrap here
@@ -82,9 +85,12 @@ struct ShoppingView: View {
                 }
             }
         }
+        .refreshable { await loadAll() }
         .onDisappear {
             Task { await subscription.unsubscribe() }
         }
+        .sensoryFeedback(.selection, trigger: toggleTrigger)
+        .sensoryFeedback(.impact(weight: .light), trigger: deleteTrigger)
     }
 
     private var list: some View {
@@ -332,6 +338,7 @@ struct ShoppingView: View {
             if let index = items.firstIndex(where: { $0.id == item.id }) {
                 items[index] = updated
             }
+            toggleTrigger += 1
         } catch {
             errorMessage = "No se ha podido actualizar el artículo: \(error.localizedDescription)"
         }
@@ -343,6 +350,7 @@ struct ShoppingView: View {
             withAnimation {
                 items.removeAll { $0.id == item.id }
             }
+            deleteTrigger += 1
         } catch {
             errorMessage = "No se ha podido quitar el artículo: \(error.localizedDescription)"
         }

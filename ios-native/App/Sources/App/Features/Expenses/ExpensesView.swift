@@ -67,6 +67,7 @@ struct ExpensesView: View {
         .sheet(item: $exportedFile) { file in
             ActivityShareSheet(activityItems: [file.url])
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: store.deletionTick)
     }
 
     private func exportExcel() async {
