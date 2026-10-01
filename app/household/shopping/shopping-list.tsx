@@ -302,7 +302,12 @@ function ShoppingGroup({
               disabled={!editable}
               onCheckedChange={() => editable && onToggle?.(item)}
             />
-            <span className={cn("flex-1", item.is_checked && "text-muted-foreground line-through")}>
+            <span
+              className={cn(
+                "min-w-0 flex-1 truncate",
+                item.is_checked && "text-muted-foreground line-through"
+              )}
+            >
               {groceryEmoji(item.name)} {item.name}
               {item.quantity ? ` (${item.quantity})` : ""}
             </span>

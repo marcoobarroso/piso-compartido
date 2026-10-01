@@ -1,1 +1,8 @@
 CAPACITOR_DEBUG = true
+
+// Xcode's "debug dylib" fast-build path (blank-executor stub + hot-swapped
+// .debug.dylib) ends up handing the connected UIWindowScene to
+// SwiftUI.AppSceneDelegate instead of our own SceneDelegate, so the app
+// never gets a UIWindow and just shows a black screen. Force the normal,
+// fully-linked debug binary instead.
+ENABLE_DEBUG_DYLIB = NO
