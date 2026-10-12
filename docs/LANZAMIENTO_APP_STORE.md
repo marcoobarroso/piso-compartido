@@ -67,17 +67,26 @@ Mac):**
 4. Marco acepta la invitación por correo, y en **Xcode → Settings → Accounts**
    añade su propio Apple ID (el suyo, no el del amigo). El equipo del amigo
    aparecerá disponible en el desplegable **Team** del apartado 3.2.
-5. A partir de aquí, Marco puede compilar en su iPhone, archivar y subir la
-   build él mismo — el nombre que aparece como vendedor en la App Store sigue
-   siendo el del amigo (apartado 7), eso no cambia con este paso.
+5. Con rol **Admin**, o App Manager con "Acceso a certificados, identificadores
+   y perfiles" y "Acceso al certificado de distribución gestionado en la nube",
+   Marco puede compilar en su iPhone, archivar y subir la build él mismo. Con
+   App Manager a secas, Marco gestiona la ficha y TestFlight, pero la firma y
+   la subida las hace el amigo con un solo comando (ver abajo). El vendedor en
+   la App Store sigue siendo el amigo (apartado 7) en ambos casos.
 
-**Opción B — el amigo hace él mismo los pasos 3.1 a 3.9** en su propio Mac,
-tal como estaba pensado originalmente (menos cómodo si Marco es quien está
-haciendo los cambios de código).
+**Opción B — el amigo firma y sube** en su propio Mac. Es la configuración
+actual: Marco es App Manager sin acceso a certificados, y el amigo ejecuta
 
-Con la Opción A, el bundle id y el Team ID en `ios-native/project.yml` no
-hace falta tocarlos — ya están puestos al equipo del amigo (`R4U5XJ6C89`,
-el mismo que ya usaba la app actual en TestFlight/App Store).
+```bash
+cd ~/rumis && ios-native/scripts/subir-testflight.sh
+```
+
+que descarga la última versión del repo, genera el proyecto, pone como número
+de build la fecha y hora, archiva, firma y sube a App Store Connect.
+
+El Team ID de `ios-native/project.yml` es el del equipo del amigo
+(`3862GT8D5W`). `R4U5XJ6C89` es el Personal Team gratuito de Marco y no sirve
+para subir a TestFlight.
 
 ## 3. Pasos del amigo (o de Marco, si se hizo la Opción A de arriba)
 
@@ -96,10 +105,8 @@ mano ni se sube a git).
 Target **Rumis** (no "App", ese era el nombre del target antiguo de Capacitor) →
 pestaña **Signing & Capabilities**:
 1. Marcar **Automatically manage signing**.
-2. **Team**: su cuenta de desarrollador (sustituye al `DEVELOPMENT_TEAM` de
-   `ios-native/project.yml`, que trae puesto el de Marco — hay que cambiarlo ahí
-   y volver a ejecutar `xcodegen generate`, o Xcode lo pisará igualmente al
-   firmar automáticamente).
+2. **Team**: el equipo del amigo (`3862GT8D5W`, ya puesto en
+   `DEVELOPMENT_TEAM` de `ios-native/project.yml`).
 3. **Bundle Identifier**: `com.marcobarroso.rumis`. Si Apple dice que no
    está disponible, poner otro (p. ej. `com.<suapellido>.rumis`) y
    avisar a Marco: hay que cambiarlo también en `PRODUCT_BUNDLE_IDENTIFIER` de
