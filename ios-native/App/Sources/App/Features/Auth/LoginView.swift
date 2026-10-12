@@ -53,7 +53,7 @@ struct LoginView: View {
                         )
                 }
 
-                RCard(title: "Rumis", description: stepDescription) {
+                RCard(title: "Rumies", description: stepDescription) {
                     Group {
                         switch step {
                         case .email:

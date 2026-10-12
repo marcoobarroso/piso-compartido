@@ -17,7 +17,7 @@ struct PrivacyView: View {
 
                 section(
                     "Quién es el responsable",
-                    "Rumis está desarrollada y gestionada por Marco Barroso Martín. Para cualquier consulta sobre esta política o sobre tus datos, escribe a marcbarro.07@gmail.com."
+                    "Rumies está desarrollada y gestionada por Marco Barroso Martín. Para cualquier consulta sobre esta política o sobre tus datos, escribe a marcbarro.07@gmail.com."
                 )
 
                 section(

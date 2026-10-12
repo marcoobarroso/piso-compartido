@@ -37,7 +37,7 @@ struct AccountSettingsView: View {
     /// Same contact address already published in the privacy policy/terms.
     private var feedbackURL: URL? {
         var components = URLComponents(string: "mailto:marcbarro.07@gmail.com")
-        components?.queryItems = [URLQueryItem(name: "subject", value: "Sugerencia sobre Rumis")]
+        components?.queryItems = [URLQueryItem(name: "subject", value: "Sugerencia sobre Rumies")]
         return components?.url
     }
 

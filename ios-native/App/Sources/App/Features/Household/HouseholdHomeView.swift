@@ -153,7 +153,7 @@ struct HouseholdHomeView: View {
 
     private func shareURL(inviteCode: String) -> URL? {
         let joinURL = AppConfig.webBaseURL.appendingPathComponent("join/\(inviteCode)")
-        let message = "Únete a nuestro piso en Rumis: \(joinURL.absoluteString)"
+        let message = "Únete a nuestro piso en Rumies: \(joinURL.absoluteString)"
         guard let encoded = message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
             return nil
         }

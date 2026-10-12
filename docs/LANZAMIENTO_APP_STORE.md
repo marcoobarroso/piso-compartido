@@ -1,4 +1,4 @@
-# Lanzar Rumis en la App Store
+# Lanzar Rumies en la App Store
 
 ## Cómo funciona (app nativa, ya no es un contenedor web)
 
@@ -67,22 +67,46 @@ Mac):**
 4. Marco acepta la invitación por correo, y en **Xcode → Settings → Accounts**
    añade su propio Apple ID (el suyo, no el del amigo). El equipo del amigo
    aparecerá disponible en el desplegable **Team** del apartado 3.2.
-5. Con rol **Admin**, o App Manager con "Acceso a certificados, identificadores
-   y perfiles" y "Acceso al certificado de distribución gestionado en la nube",
-   Marco puede compilar en su iPhone, archivar y subir la build él mismo. Con
-   App Manager a secas, Marco gestiona la ficha y TestFlight, pero la firma y
-   la subida las hace el amigo con un solo comando (ver abajo). El vendedor en
+5. Con App Manager a secas, Marco gestiona la ficha y TestFlight pero no puede
+   firmar. Para que firme y suba él, hay dos caminos (abajo). El vendedor en
    la App Store sigue siendo el amigo (apartado 7) en ambos casos.
 
-**Opción B — el amigo firma y sube** en su propio Mac. Es la configuración
-actual: Marco es App Manager sin acceso a certificados, y el amigo ejecuta
+**Configuración actual: firma manual.** Marco es App Manager (sin acceso a
+certificados) y firma con un certificado y un perfil que crea el amigo una
+vez:
+
+1. Marco genera un CSR en su Mac: Acceso a Llaveros → Asistente para
+   certificados → Solicitar un certificado de una autoridad de certificación…
+   → Guardado en el disco. La clave privada se queda en su llavero.
+2. El amigo, en developer.apple.com → Certificates, IDs & Profiles:
+   - Certificates → + → **Apple Distribution** → sube el CSR → descarga el `.cer`.
+   - Identifiers → + → App ID `com.marcobarroso.rumis` con **Push
+     Notifications** y **Associated Domains**.
+   - Profiles → + → Distribution **App Store Connect** → ese App ID y ese
+     certificado → nombre **`Rumies App Store`** → descarga el `.mobileprovision`.
+3. Marco instala los dos archivos con doble clic.
+
+`project.yml` firma Release a mano con `Apple Distribution` + `Rumies App
+Store` y con `App/App.Release.entitlements` (`aps-environment: production`,
+que es lo que trae el perfil de App Store). Debug sigue en automática para el
+simulador; Marco no puede instalar en su iPhone desde Xcode, solo vía
+TestFlight. Cada subida:
 
 ```bash
-cd ~/rumis && ios-native/scripts/subir-testflight.sh
+cd ~/claude/rumis && ios-native/scripts/subir-testflight.sh
 ```
 
 que descarga la última versión del repo, genera el proyecto, pone como número
-de build la fecha y hora, archiva, firma y sube a App Store Connect.
+de build la fecha y hora, archiva, firma y sube. Si la subida directa falla,
+deja el `.ipa` en el Escritorio para subirlo con Transporter.
+
+El certificado caduca al año: entonces Marco genera otro CSR y el amigo repite
+el certificado y el perfil.
+
+**Alternativa: firma automática.** Si el amigo marca en el usuario de Marco
+"Acceso a certificados, identificadores y perfiles" y "Acceso a certificados de
+distribución gestionados en la nube" (sin hacerle Admin), Xcode firma solo;
+habría que quitar el bloque `configs: Release` de `project.yml`.
 
 El Team ID de `ios-native/project.yml` es el del equipo del amigo
 (`3862GT8D5W`). `R4U5XJ6C89` es el Personal Team gratuito de Marco y no sirve
@@ -153,7 +177,7 @@ Conectar el iPhone al Mac, elegirlo arriba en Xcode y pulsar ▶. Comprobar:
 
 ### 3.6 Crear la app en App Store Connect
 https://appstoreconnect.apple.com → **Apps** → **+** → Nueva app:
-plataforma iOS, nombre **Rumis**, idioma principal **Español (España)**,
+plataforma iOS, nombre **Rumies** ("Rumis" estaba ocupado), idioma principal **Español (España)**,
 el Bundle ID de 3.2, SKU `rumis`, acceso completo.
 
 ### 3.7 Subir la build
@@ -176,7 +200,7 @@ Con los datos del apartado 4. Seleccionar la build → **Añadir para revisión*
 
 ## 4. Datos de la ficha
 
-- **Nombre**: Rumis
+- **Nombre**: Rumies
 - **Subtítulo** (máx. 30): Gastos, tareas y compra
 - **Categoría**: Estilo de vida (secundaria: Productividad)
 - **Precio**: Gratis · **Disponibilidad**: todos los países o solo España
@@ -189,7 +213,7 @@ Con los datos del apartado 4. Seleccionar la build → **Añadir para revisión*
 
 **Descripción**:
 ```
-Rumis reúne en un solo sitio todo lo que necesitas para convivir sin discusiones.
+Rumies reúne en un solo sitio todo lo que necesitas para convivir sin discusiones.
 
 GASTOS
 Apunta lo que pagas y repártelo entre quienes corresponda, a partes iguales o con importes exactos. La app calcula quién debe a quién con el mínimo de pagos y te deja registrarlos. Gastos fijos que se generan solos, categorías, estadísticas y exportación a Excel.

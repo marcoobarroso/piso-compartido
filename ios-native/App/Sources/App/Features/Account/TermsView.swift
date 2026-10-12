@@ -15,8 +15,8 @@ struct TermsView: View {
                 }
 
                 section(
-                    "Qué es Rumis",
-                    "Rumis es una aplicación gratuita para organizar un piso compartido: repartir gastos, asignar tareas domésticas por turnos y llevar una lista de la compra común. La gestiona Marco Barroso Martín como proyecto personal, sin ánimo de lucro ni publicidad."
+                    "Qué es Rumies",
+                    "Rumies es una aplicación gratuita para organizar un piso compartido: repartir gastos, asignar tareas domésticas por turnos y llevar una lista de la compra común. La gestiona Marco Barroso Martín como proyecto personal, sin ánimo de lucro ni publicidad."
                 )
 
                 section(
@@ -26,18 +26,18 @@ struct TermsView: View {
 
                 section(
                     "Tu cuenta y lo que compartes",
-                    "Eres responsable de lo que añades a tu piso (gastos, tareas, artículos de la compra) y de a quién invitas con tu código. Tus compañeros de piso pueden ver, editar y borrar ese contenido igual que tú — Rumis es un espacio compartido, no privado, dentro de cada piso."
+                    "Eres responsable de lo que añades a tu piso (gastos, tareas, artículos de la compra) y de a quién invitas con tu código. Tus compañeros de piso pueden ver, editar y borrar ese contenido igual que tú — Rumies es un espacio compartido, no privado, dentro de cada piso."
                 )
 
                 section(
                     "Sobre los gastos",
-                    "Rumis no mueve dinero real. Los \"gastos\" y \"liquidaciones\" son anotaciones para llevar la cuenta de quién debe qué — los pagos entre compañeros los hacéis vosotros por fuera de la app (Bizum, efectivo, etc.). No nos hacemos responsables de errores en los repartos ni de pagos que no lleguen a hacerse fuera de la aplicación."
+                    "Rumies no mueve dinero real. Los \"gastos\" y \"liquidaciones\" son anotaciones para llevar la cuenta de quién debe qué — los pagos entre compañeros los hacéis vosotros por fuera de la app (Bizum, efectivo, etc.). No nos hacemos responsables de errores en los repartos ni de pagos que no lleguen a hacerse fuera de la aplicación."
                 )
 
                 section(
                     "Uso aceptable",
                     """
-                    No está permitido usar Rumis para:
+                    No está permitido usar Rumies para:
 
                     • Compartir contenido ilegal, ofensivo o que suplante a otra persona.
                     • Intentar acceder a un piso que no es el tuyo sin invitación.
@@ -49,7 +49,7 @@ struct TermsView: View {
 
                 section(
                     "Disponibilidad del servicio",
-                    "Rumis se ofrece \"tal cual\", sin garantizar que esté disponible de forma ininterrumpida. Es un proyecto pequeño y puede sufrir cortes, cambios o, en el peor caso, dejar de mantenerse — intentaremos avisar con tiempo si esto último fuera a pasar, para que puedas exportar tus datos antes."
+                    "Rumies se ofrece \"tal cual\", sin garantizar que esté disponible de forma ininterrumpida. Es un proyecto pequeño y puede sufrir cortes, cambios o, en el peor caso, dejar de mantenerse — intentaremos avisar con tiempo si esto último fuera a pasar, para que puedas exportar tus datos antes."
                 )
 
                 section(
