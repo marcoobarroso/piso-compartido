@@ -66,7 +66,7 @@ async function sendWebPush(userId: string, message: Message) {
             endpoint: sub.endpoint,
             keys: { p256dh: sub.p256dh, auth: sub.auth },
           },
-          JSON.stringify({ title: "Rumis", body: message.body, link: message.link })
+          JSON.stringify({ title: "Rumies", body: message.body, link: message.link })
         );
       } catch (err) {
         const statusCode = (err as { statusCode?: number }).statusCode;
@@ -159,7 +159,7 @@ async function sendApns(userId: string, message: Message) {
 
   const body = JSON.stringify({
     aps: {
-      alert: { title: "Rumis", body: message.body },
+      alert: { title: "Rumies", body: message.body },
       sound: "default",
     },
     link: message.link,

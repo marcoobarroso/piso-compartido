@@ -88,7 +88,7 @@ export async function GET(request: Request) {
   }, {});
 
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "Rumis";
+  workbook.creator = "Rumies";
   workbook.created = new Date();
 
   // ---- Hoja "Gastos": una fila por gasto, fácil de escanear de un vistazo ----

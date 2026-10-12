@@ -101,7 +101,7 @@ export function LoginForm() {
       </div>
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Rumis</CardTitle>
+          <CardTitle>Rumies</CardTitle>
           <CardDescription>
             {step === "email"
               ? "Escribe tu email y te mandamos un código para entrar, sin contraseña."

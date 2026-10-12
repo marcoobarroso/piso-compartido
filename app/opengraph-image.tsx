@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
-export const alt = "Rumis";
+export const alt = "Rumies";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -41,7 +41,7 @@ export default async function Image() {
             letterSpacing: "-0.02em",
           }}
         >
-          Rumis
+          Rumies
         </div>
         <div
           style={{
