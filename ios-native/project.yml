@@ -22,9 +22,11 @@ targets:
     platform: iOS
     sources:
       - path: App/Sources
-    resources:
+      # XcodeGen no tiene clave `resources:`; los recursos van en `sources` y
+      # los mete en la fase de recursos según el tipo de archivo.
       - path: App/Resources
       - path: App/PrivacyInfo.xcprivacy
+        buildPhase: resources
     dependencies:
       - package: RumisCore
         product: RumisCore

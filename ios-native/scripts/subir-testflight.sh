@@ -34,7 +34,7 @@ ARCHIVE="$HOME/Library/Developer/Xcode/Archives/$(date +%Y-%m-%d)/Rumies-$BUILD.
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
-echo "→ Archivando build $BUILD…"
+echo "→ Archivando build ${BUILD}…"
 xcodebuild archive \
   -project Rumis.xcodeproj \
   -scheme Rumis \
@@ -88,9 +88,9 @@ export_options export
 xcodebuild -exportArchive \
   -archivePath "$ARCHIVE" \
   -exportOptionsPlist "$WORK/ExportOptions.plist" \
-  -exportPath "$OUT" \
+  -exportPath "${OUT}" \
   -quiet
-echo "✓ .ipa listo en $OUT"
+echo "✓ .ipa listo en ${OUT}"
 echo "  Ábrelo con Transporter (Mac App Store), entra con tu Apple ID, arrastra el .ipa y pulsa Entregar."
 open -a Transporter 2>/dev/null || true
-open "$OUT"
+open "${OUT}"
