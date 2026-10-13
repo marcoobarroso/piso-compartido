@@ -2,7 +2,7 @@
 # Archiva Rumies y lo sube a App Store Connect (TestFlight) en un solo paso.
 #
 # Firma manual: necesita en el llavero el certificado "Apple Distribution" del
-# equipo y el perfil "Rumies App Store" instalado (doble clic en el
+# equipo y el perfil "Rumies Marco" instalado (doble clic en el
 # .mobileprovision). Ambos los crea el titular de la cuenta; ver
 # docs/LANZAMIENTO_APP_STORE.md. Uso:
 #
@@ -15,7 +15,7 @@
 set -euo pipefail
 
 BUNDLE_ID="com.marcobarroso.rumis"
-PROFILE="Rumies App Store"
+PROFILE="Rumies Marco"
 cd "$(dirname "$0")/.."
 
 command -v xcodegen >/dev/null || { echo "Falta XcodeGen: brew install xcodegen" >&2; exit 1; }

@@ -83,7 +83,7 @@ vez:
    - Identifiers → + → App ID `com.marcobarroso.rumis` con **Push
      Notifications** y **Associated Domains**.
    - Profiles → + → Distribution **App Store Connect** → ese App ID y ese
-     certificado → nombre **`Rumies App Store`** → descarga el `.mobileprovision`.
+     certificado → nombre **`Rumies Marco`** → descarga el `.mobileprovision`.
 3. Marco instala los dos archivos con doble clic.
 
 `project.yml` firma Release a mano con `Apple Distribution` + `Rumies App
