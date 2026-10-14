@@ -56,3 +56,17 @@ struct RTextField: View {
             .foregroundStyle(RTheme.foreground)
     }
 }
+
+/// Shrinks a tappable card slightly under the finger, for buttons whose
+/// label is a whole card rather than a plain text button.
+struct PressableCardStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
+    }
+}
+
+extension ButtonStyle where Self == PressableCardStyle {
+    static var rPressable: PressableCardStyle { PressableCardStyle() }
+}

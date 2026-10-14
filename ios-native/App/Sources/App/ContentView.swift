@@ -5,8 +5,27 @@ import SwiftUI
 struct ContentView: View {
     @Environment(AppSession.self) private var session
     @Environment(NetworkMonitor.self) private var networkMonitor
+    @State private var showSplash = true
 
     var body: some View {
+        ZStack {
+            routedContent
+                .environment(\.isSplashVisible, showSplash)
+
+            if showSplash {
+                SplashView(isReady: session.route != .loading || session.loadError != nil) {
+                    withAnimation(.easeInOut(duration: 0.45)) {
+                        showSplash = false
+                    }
+                }
+                .transition(.opacity.combined(with: .scale(scale: 1.08)))
+                .zIndex(1)
+            }
+        }
+        .background(RTheme.background)
+    }
+
+    private var routedContent: some View {
         VStack(spacing: 0) {
             if !networkMonitor.isConnected {
                 OfflineBanner()
@@ -36,11 +55,15 @@ struct ContentView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .background(RTheme.background)
-        .onChange(of: session.route) { _, newRoute in
-            if newRoute == .inHousehold {
-                Task { await PushManager.requestPermissionAndRegister() }
-            }
-        }
+        .onChange(of: session.route) { requestPushIfInHousehold() }
+        // Wait for the splash to lift so the system permission alert
+        // doesn't land on top of the intro.
+        .onChange(of: showSplash) { requestPushIfInHousehold() }
+    }
+
+    private func requestPushIfInHousehold() {
+        guard session.route == .inHousehold, !showSplash else { return }
+        Task { await PushManager.requestPermissionAndRegister() }
     }
 }
 

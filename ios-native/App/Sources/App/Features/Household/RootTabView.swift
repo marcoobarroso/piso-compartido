@@ -10,7 +10,7 @@ struct RootTabView: View {
 
     var body: some View {
         TabView(selection: $selection) {
-            HouseholdHomeView()
+            HouseholdHomeView(openTab: { selection = $0 })
                 .tabItem {
                     Label("Inicio", systemImage: "house.fill")
                 }

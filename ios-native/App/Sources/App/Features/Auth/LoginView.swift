@@ -29,15 +29,9 @@ struct LoginView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: RTheme.Radius.lg)
-                        .fill(RTheme.primary.opacity(0.15))
-                    Image(systemName: "house.fill")
-                        .foregroundStyle(RTheme.primary)
-                        .font(.system(size: 22, weight: .semibold))
-                }
-                .frame(width: 56, height: 56)
-                .padding(.top, 40)
+                RumiesMark(size: 64)
+                    .shadow(color: RBrand.coral.opacity(0.3), radius: 16, y: 6)
+                    .padding(.top, 40)
 
                 if session.accountJustDeleted {
                     Text("Tu cuenta se ha borrado correctamente.")

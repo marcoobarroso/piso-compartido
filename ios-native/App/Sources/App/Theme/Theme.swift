@@ -88,3 +88,18 @@ extension ExpenseCategory {
         Color(hex: hex)
     }
 }
+
+/// Brand colors taken from the app icon (plum → coral), used by the launch
+/// splash, the brand mark and the hero card on Inicio.
+enum RBrand {
+    static let plum = Color(hex: "#3a1636")
+    static let rose = Color(hex: "#8e4249")
+    static let coral = Color(hex: "#d26c48")
+    static let door = Color(hex: "#e88856")
+
+    static let gradient = LinearGradient(
+        colors: [plum, rose, coral],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+}
